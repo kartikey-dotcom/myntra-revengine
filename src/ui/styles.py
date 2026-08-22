@@ -12,7 +12,7 @@ html, body, [class*="css"] {
 
 /* Hide Streamlit default header/footer padding */
 .block-container {
-    padding-top: 1.5rem !important;
+    padding-top: 1rem !important;
     padding-bottom: 2rem !important;
     max-width: 1200px !important;
 }
@@ -23,49 +23,51 @@ header[data-testid="stHeader"] {
 
 #MainMenu, footer, header {visibility: hidden;}
 
-/* Custom Top Navigation Bar */
-.top-navbar {
+/* Custom Interactive Navbar Row */
+.navbar-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 0rem 1.25rem 0rem;
+    padding: 0.5rem 0rem 1rem 0rem;
     border-bottom: 1px solid #E2E8F0;
     margin-bottom: 1.5rem;
 }
 
 .nav-brand {
-    font-size: 1.35rem;
-    font-weight: 700;
+    font-size: 1.45rem;
+    font-weight: 800;
     color: #E11D48;
     text-decoration: none;
-    letter-spacing: -0.02em;
-}
-
-.nav-links {
+    letter-spacing: -0.03em;
     display: flex;
-    gap: 2rem;
     align-items: center;
 }
 
-.nav-link {
-    color: #64748B;
-    font-size: 0.95rem;
-    font-weight: 500;
-    text-decoration: none;
-    padding-bottom: 0.5rem;
+/* Tab buttons styling */
+div[data-testid="stHorizontalBlock"] .stButton > button {
+    background-color: transparent !important;
+    color: #64748B !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 0px !important;
+    border-bottom: 2px solid transparent !important;
 }
 
-.nav-link.active {
-    color: #E11D48;
-    font-weight: 600;
-    border-bottom: 2px solid #E11D48;
+div[data-testid="stHorizontalBlock"] .stButton > button:hover {
+    color: #E11D48 !important;
+    background-color: #FFF1F2 !important;
+    border-radius: 6px !important;
 }
 
-.nav-icons {
-    display: flex;
-    gap: 1rem;
-    color: #64748B;
-    font-size: 1.1rem;
+div[data-testid="stHorizontalBlock"] .stButton > button[kind="primary"] {
+    color: #E11D48 !important;
+    font-weight: 700 !important;
+    border-bottom: 2px solid #E11D48 !important;
+    background-color: transparent !important;
+    border-radius: 0px !important;
 }
 
 /* Page Header */
@@ -242,8 +244,8 @@ header[data-testid="stHeader"] {
     margin-bottom: 1rem;
 }
 
-/* Custom Styled Button */
-div.stButton > button:first-child {
+/* Action button styling */
+.action-btn button {
     background-color: #E11D48 !important;
     color: #FFFFFF !important;
     font-weight: 600 !important;
@@ -252,12 +254,6 @@ div.stButton > button:first-child {
     border-radius: 8px !important;
     border: none !important;
     box-shadow: 0 1px 2px rgba(225, 29, 72, 0.2) !important;
-    transition: all 0.2s ease !important;
-}
-
-div.stButton > button:first-child:hover {
-    background-color: #BE123C !important;
-    color: #FFFFFF !important;
 }
 
 /* Footer */
@@ -282,22 +278,6 @@ div.stButton > button:first-child:hover {
     text-decoration: none;
 }
 </style>
-"""
-
-NAVBAR_HTML = """
-<div class="top-navbar">
-    <div class="nav-brand">Growth Analytics</div>
-    <div class="nav-links">
-        <span class="nav-link">Performance</span>
-        <span class="nav-link">Traffic</span>
-        <span class="nav-link active">Customer</span>
-        <span class="nav-link">Revenue</span>
-    </div>
-    <div class="nav-icons">
-        <span>🔔</span>
-        <span>👤</span>
-    </div>
-</div>
 """
 
 FOOTER_HTML = """

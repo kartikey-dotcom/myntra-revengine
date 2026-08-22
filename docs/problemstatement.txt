@@ -1,0 +1,67 @@
+PROBLEM STATEMENT: AI-POWERED REVIEW INTELLIGENCE & AUTHENTICITY SYSTEM FOR MYNTRA
+
+Project Name: Myntra AI Review Intelligence & Governance Engine
+Domain: E-Commerce / Fashion Tech / Generative AI & NLP
+Target Audience: Myntra Shoppers, Operations & Moderation Teams, Partner Brands & Sellers
+
+--------------------------------------------------------------------------------
+1. EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+Myntra is India's leading e-commerce platform for fashion, beauty, and lifestyle products, handling millions of customer transactions daily. User-Generated Content (UGC), specifically customer reviews, star ratings, and uploaded images, serves as the primary trust signal for online fashion shoppers.
+
+However, as the platform scales, the sheer volume of reviews—coupled with the rise of synthetic AI-generated content, unstructured feedback, and inconsistent size/fit ratings—presents significant challenges to consumer trust and platform operational efficiency.
+
+This project aims to define and architect an AI-Powered Customer Review Intelligence Platform that automates content moderation, filters fake/spam reviews, dynamically summarizes customer sentiment, and extracts granular size & fit insights to enhance purchase confidence and reduce return rates.
+
+--------------------------------------------------------------------------------
+2. BACKGROUND & STRATEGIC CONTEXT
+--------------------------------------------------------------------------------
+In fashion e-commerce, purchasing decisions rely heavily on qualitative factors:
+- Material & Fabric Feel: Is the fabric breathable? Is it transparent? Does it shrink?
+- Color Accuracy: Does the actual product match studio-lit photos?
+- Size & Fit Variability: How does a "Medium" fit across different brands and body types?
+
+While customer reviews answer these questions, shoppers often face information overload (scrolling through hundreds of repetitive reviews) or information deficit (vague reviews like "Nice product"). Additionally, return rates in fashion e-commerce average 25%–40%, with size and fit issues accounting for over 60% of returns.
+
+--------------------------------------------------------------------------------
+3. KEY CHALLENGES & PROBLEM DEFINITION
+--------------------------------------------------------------------------------
+3.1 Shopper Pain Points:
+1. Unstructured & Repetitive Feedback: Finding relevant insights regarding fit, fabric quality, or durability is tedious.
+2. Erosion of Trust via Synthetic & Fake Reviews: LLM-generated reviews, bot spam, and incentivized feedback dilute review authenticity.
+3. Lack of Personalized Fit Context: Generic ratings do not reflect how garments fit specific body measurements.
+4. Delivery/Service Bias in Product Reviews: Logistical issues degrade product ratings rather than actual item quality.
+
+3.2 Business & Operational Pain Points:
+1. High Return Rates Driven by Fit Discrepancies: Inaccurate sizing expectations increase reverse logistics costs.
+2. Moderation Scalability Bottlenecks: Manual moderation teams cannot keep pace during peak sale events.
+3. Unrealized Seller Insights: Brands lack aggregated feedback on manufacturing defects or sizing trends.
+
+--------------------------------------------------------------------------------
+4. FORMAL PROBLEM STATEMENT
+--------------------------------------------------------------------------------
+How might we construct an intelligent, end-to-end AI system for Myntra that validates review authenticity in real time, distills thousands of customer reviews into actionable visual summaries, and derives personalized size & fit intelligence to maximize shopper conversion and minimize fit-related returns?
+
+--------------------------------------------------------------------------------
+5. CORE OBJECTIVES & KEY PERFORMANCE INDICATORS (KPIS)
+--------------------------------------------------------------------------------
+- Authenticity Assurance: Detect synthetic/fake/spam reviews (>95% precision).
+- Smart Summarization: Generate aspect-based summaries (Fabric, Fit, Color, Stitching) in <5 seconds time-to-insight.
+- Fit Intelligence Extraction: Extract body metrics (NER) and fit deltas to reduce fit-related returns by 15%-20%.
+- Operational Automation: Automate >70% of moderation approvals.
+
+--------------------------------------------------------------------------------
+6. FUNCTIONAL MODULES & ARCHITECTURE
+--------------------------------------------------------------------------------
+- Module 1: Fake & Synthetic Review Detection Engine (Perplexity, burstiness, behavioral metadata)
+- Module 2: Aspect-Based Sentiment & Summarization Engine (ABSA for fashion attributes, pros/cons synthesis)
+- Module 3: Dynamic Size, Fit & Body Type Intelligence (NER for measurements, fit delta calculations)
+- Module 4: Seller & Brand Analytics Dashboard (Defect alerting, sizing calibration)
+
+--------------------------------------------------------------------------------
+7. PROPOSED TECH STACK
+--------------------------------------------------------------------------------
+- Ingestion: Apache Kafka / AWS Kinesis
+- NLP/LLM: PyTorch, Hugging Face Transformers (RoBERTa / DeBERTa), OpenAI / Gemini
+- Databases: PostgreSQL, Pinecone/Qdrant (Vector DB), Elasticsearch/OpenSearch
+- Backend & Frontend: Python (FastAPI), React / Next.js, React Native

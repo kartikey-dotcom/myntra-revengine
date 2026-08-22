@@ -583,186 +583,109 @@ elif st.session_state.active_nav == "Strategic Q&A":
             }
         ]
 
-    chat_tab, curated_tab = st.tabs(["💬 Interactive AI Chatbot (GPT Mode)", "📚 Verified PM Strategic Library"])
+    # Callback for suggestion chips
+    def set_pending_query(q_text):
+        st.session_state.pending_prompt = q_text
 
-    with chat_tab:
-        # Callback for suggestion chips
-        def set_pending_query(q_text):
-            st.session_state.pending_prompt = q_text
-
-        # Prominent Search / Prompt Box at the Top of Chat
-        st.markdown(
-            """
-            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.25rem 1.25rem 0.75rem 1.25rem; margin-bottom: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-                <div style="font-size: 1rem; font-weight: 700; color: #0F172A; margin-bottom: 0.25rem;">
-                    🔎 Ask the Intelligence Engine
-                </div>
-                <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 0.75rem;">
-                    Type any question to analyze consumer sentiment and extract verbatim quotes from the 29,067 records:
-                </div>
+    # Prominent Search / Prompt Box at the Top of Chat
+    st.markdown(
+        """
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.25rem 1.25rem 0.75rem 1.25rem; margin-bottom: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div style="font-size: 1rem; font-weight: 700; color: #0F172A; margin-bottom: 0.25rem;">
+                🔎 Ask the Intelligence Engine
             </div>
-            """,
-            unsafe_allow_html=True,
+            <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 0.75rem;">
+                Type any question to analyze consumer sentiment and extract verbatim quotes from the 29,067 records:
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    with st.form("qa_top_search_form", clear_on_submit=True):
+        s_col1, s_col2 = st.columns([4.8, 1.2])
+        with s_col1:
+            top_query_input = st.text_input(
+                "Search Input",
+                placeholder="e.g., Why do shoppers hesitate to buy blazers? Or what are top size issues?",
+                label_visibility="collapsed",
+            )
+        with s_col2:
+            top_search_btn = st.form_submit_button("🔍 Ask Copilot", use_container_width=True, type="primary")
+
+    if top_search_btn and top_query_input.strip():
+        st.session_state.pending_prompt = top_query_input.strip()
+
+    # Quick-prompt suggestion chips
+    st.markdown("<div style='font-size: 0.85rem; font-weight: 600; color: #64748B; margin-top: 0.5rem; margin-bottom: 0.5rem;'>💡 Quick Suggestion Chips (Click to ask):</div>", unsafe_allow_html=True)
+    chip_col1, chip_col2, chip_col3, chip_col4, chip_col5 = st.columns([1, 1, 1, 1, 0.5])
+    
+    with chip_col1:
+        st.button(
+            "👗 Why Styling Isolation?",
+            key="chip_style",
+            use_container_width=True,
+            on_click=set_pending_query,
+            args=("Why is Styling Isolation the #1 reason users abandon their wishlists?",),
         )
-
-        with st.form("qa_top_search_form", clear_on_submit=True):
-            s_col1, s_col2 = st.columns([4.8, 1.2])
-            with s_col1:
-                top_query_input = st.text_input(
-                    "Search Input",
-                    placeholder="e.g., Why do shoppers hesitate to buy blazers? Or what are top size issues?",
-                    label_visibility="collapsed",
-                )
-            with s_col2:
-                top_search_btn = st.form_submit_button("🔍 Ask Copilot", use_container_width=True, type="primary")
-
-        if top_search_btn and top_query_input.strip():
-            st.session_state.pending_prompt = top_query_input.strip()
-
-        # Quick-prompt suggestion chips
-        st.markdown("<div style='font-size: 0.85rem; font-weight: 600; color: #64748B; margin-top: 0.5rem; margin-bottom: 0.5rem;'>💡 Quick Suggestion Chips (Click to ask):</div>", unsafe_allow_html=True)
-        chip_col1, chip_col2, chip_col3, chip_col4, chip_col5 = st.columns([1, 1, 1, 1, 0.5])
-        
-        with chip_col1:
-            st.button(
-                "👗 Why Styling Isolation?",
-                key="chip_style",
-                use_container_width=True,
-                on_click=set_pending_query,
-                args=("Why is Styling Isolation the #1 reason users abandon their wishlists?",),
-            )
-        with chip_col2:
-            st.button(
-                "📏 Sizing Complaints?",
-                key="chip_fit",
-                use_container_width=True,
-                on_click=set_pending_query,
-                args=("What are the most frequent sizing and fit ambiguity complaints in the reviews?",),
-            )
-        with chip_col3:
-            st.button(
-                "📱 WhatsApp / Pinterest Leakage?",
-                key="chip_off",
-                use_container_width=True,
-                on_click=set_pending_query,
-                args=("How do users try to solve fashion hesitation off-platform on WhatsApp and Pinterest?",),
-            )
-        with chip_col4:
-            st.button(
-                "🚀 Complete the Look ROI?",
-                key="chip_roi",
-                use_container_width=True,
-                on_click=set_pending_query,
-                args=("What is the expected ROI and GMV recovery of the 'Complete the Look' MVP?",),
-            )
-        with chip_col5:
-            if st.button("🔄 Reset", key="chip_clear", use_container_width=True):
-                st.session_state.chat_messages = [
-                    {
-                        "role": "assistant",
-                        "content": "👋 Chat reset. Ask me anything about customer hesitation patterns, styling isolation, or sizing feedback!",
-                    }
-                ]
-                st.session_state.pending_prompt = None
-                st.rerun()
-
-        st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
-
-        # Handle bottom chat_input
-        user_bottom_input = st.chat_input("Or type your question here...")
-        if user_bottom_input and user_bottom_input.strip():
-            st.session_state.pending_prompt = user_bottom_input.strip()
-
-        # Process any pending prompt (from chips, top search form, or bottom input)
-        if st.session_state.get("pending_prompt"):
-            active_q = st.session_state.pending_prompt
+    with chip_col2:
+        st.button(
+            "📏 Sizing Complaints?",
+            key="chip_fit",
+            use_container_width=True,
+            on_click=set_pending_query,
+            args=("What are the most frequent sizing and fit ambiguity complaints in the reviews?",),
+        )
+    with chip_col3:
+        st.button(
+            "📱 WhatsApp / Pinterest Leakage?",
+            key="chip_off",
+            use_container_width=True,
+            on_click=set_pending_query,
+            args=("How do users try to solve fashion hesitation off-platform on WhatsApp and Pinterest?",),
+        )
+    with chip_col4:
+        st.button(
+            "🚀 Complete the Look ROI?",
+            key="chip_roi",
+            use_container_width=True,
+            on_click=set_pending_query,
+            args=("What is the expected ROI and GMV recovery of the 'Complete the Look' MVP?",),
+        )
+    with chip_col5:
+        if st.button("🔄 Reset", key="chip_clear", use_container_width=True):
+            st.session_state.chat_messages = [
+                {
+                    "role": "assistant",
+                    "content": "👋 Chat reset. Ask me anything about customer hesitation patterns, styling isolation, or sizing feedback!",
+                }
+            ]
             st.session_state.pending_prompt = None
+            st.rerun()
 
-            # Add user message
-            st.session_state.chat_messages.append({"role": "user", "content": active_q})
+    st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
 
-            # Generate AI Copilot response
-            ai_answer = st.session_state.qa_chatbot.generate_response(active_q)
-            st.session_state.chat_messages.append({"role": "assistant", "content": ai_answer})
+    # Handle bottom chat_input
+    user_bottom_input = st.chat_input("Or type your question here...")
+    if user_bottom_input and user_bottom_input.strip():
+        st.session_state.pending_prompt = user_bottom_input.strip()
 
-        # Render complete conversation history
-        for msg in st.session_state.chat_messages:
-            with st.chat_message(msg["role"], avatar="🛍️" if msg["role"] == "assistant" else "👤"):
-                st.markdown(msg["content"])
+    # Process any pending prompt (from chips, top search form, or bottom input)
+    if st.session_state.get("pending_prompt"):
+        active_q = st.session_state.pending_prompt
+        st.session_state.pending_prompt = None
 
-    with curated_tab:
-        st.markdown("<div style='font-size: 0.95rem; color: #475569; margin-bottom: 1rem;'>Pre-verified executive answers to the 5 primary Growth & UX questions:</div>", unsafe_allow_html=True)
-        qa_dataset = [
-            {
-                "q": "Why do high-intent shoppers add fashion products to a wishlist rather than direct to bag?",
-                "tag": "User Intent & Motivation",
-                "badge_color": "#ECFDF5",
-                "text_color": "#059669",
-                "answer": "Wishlisting is an active **aspirational mood-boarding and risk-mitigation buffer**. Shoppers save anchor items to mentally simulate complete outfits and verify wardrobe compatibility before committing financially.",
-                "evidence": "62.4% of wishlisted items are viewed >3 times without a cart transition.",
-                "quote": "I saved this olive pleated skirt to my wishlist because I love the silhouette, but I'm keeping it there until I figure out if I already own a top that matches.",
-            },
-            {
-                "q": "What specifically prevents wishlisted products from eventually converting to checkout?",
-                "tag": "Styling Isolation (38.2%)",
-                "badge_color": "#FFF1F2",
-                "text_color": "#E11D48",
-                "answer": "**Styling Isolation (38.2%)** is the primary blocker. Standalone catalog photos fail to show paired separates or accessories, forcing the cognitive burden of outfit creation onto the shopper and triggering fears of buying 'closet orphans'.",
-                "evidence": "11,092 records across organic Reddit and YouTube haul discussions.",
-                "quote": "Love the rust jacket on the model, but I don't own those specific wide-leg jeans she's wearing. Wish Myntra sold it as a whole set so I don't have to hunt.",
-            },
-            {
-                "q": "How do shoppers currently attempt to resolve styling and fit uncertainty off-platform?",
-                "tag": "Off-Platform Leakage",
-                "badge_color": "#FFF7ED",
-                "text_color": "#EA580C",
-                "answer": "Shoppers leak off-platform through three primary loops: **Pinterest/Google Images** for outfit pairings, **YouTube Try-On Hauls** for fabric movement, and **WhatsApp screenshots** for friend validation.",
-                "evidence": "43.7% of analyzed forum threads explicitly referenced off-platform searches or WhatsApp sharing.",
-                "quote": "I literally have 5 screenshots of this Mango top sent to my best friend on WhatsApp asking what trousers to wear with it.",
-            },
-            {
-                "q": "What is the emotional state of a user abandoning a wishlist item due to fit/styling ambiguity?",
-                "tag": "Psychological Barrier",
-                "badge_color": "#F1F5F9",
-                "text_color": "#475569",
-                "answer": "Shoppers transition from **Aspirational Excitement → Cognitive Overwhelm → Anticipatory Buyer's Remorse**, driven by the dread of tedious return pickups and wasted spend.",
-                "evidence": "88.3% of hesitation records expressed fear of return logistics or 'closet deadstock'.",
-                "quote": "I bought the trousers but returned them immediately because I couldn't find a matching top on the app easily and felt frustrated.",
-            },
-            {
-                "q": "What is the recommended non-monetary product intervention for the Growth Roadmap?",
-                "tag": "Strategic Recommendation",
-                "badge_color": "#EFF6FF",
-                "text_color": "#2563EB",
-                "answer": "Deploy a **'Complete the Look' AI Bundling MVP** with 3 curated outfit variations per wishlist SKU and 1-click bundle add-to-bag, driving conversion lift without margin-eroding discounts.",
-                "evidence": "+12% Wishlist Conversion Lift | +18% AOV Lift | ₹ 14.8 Cr Recoverable GMV.",
-                "quote": "Wish Myntra had an option to just buy the matching shoes and top shown on the model in one click.",
-            },
-        ]
+        # Add user message
+        st.session_state.chat_messages.append({"role": "user", "content": active_q})
 
-        for item in qa_dataset:
-            with st.expander(f"❓ **{item['q']}**", expanded=False):
-                st.markdown(
-                    f"""
-                    <div style="margin-bottom: 0.75rem;">
-                        <span style="background-color: {item['badge_color']}; color: {item['text_color']}; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem; border-radius: 9999px;">
-                            {item['tag']}
-                        </span>
-                    </div>
-                    <div style="font-size: 0.95rem; color: #1E293B; line-height: 1.55; margin-bottom: 0.75rem;">
-                        {item['answer']}
-                    </div>
-                    <div style="background: #F8FAFC; border-left: 3px solid #E11D48; padding: 0.75rem 1rem; border-radius: 6px; margin-top: 0.5rem;">
-                        <div style="font-size: 0.8rem; font-weight: 600; color: #059669; margin-bottom: 0.25rem;">
-                            📊 Data Benchmark: {item['evidence']}
-                        </div>
-                        <div style="font-size: 0.85rem; font-style: italic; color: #475569;">
-                            💬 Customer Proof: "{item['quote']}"
-                        </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+        # Generate AI Copilot response
+        ai_answer = st.session_state.qa_chatbot.generate_response(active_q)
+        st.session_state.chat_messages.append({"role": "assistant", "content": ai_answer})
+
+    # Render complete conversation history
+    for msg in st.session_state.chat_messages:
+        with st.chat_message(msg["role"], avatar="🛍️" if msg["role"] == "assistant" else "👤"):
+            st.markdown(msg["content"])
 
 # Footer
 st.markdown(FOOTER_HTML, unsafe_allow_html=True)

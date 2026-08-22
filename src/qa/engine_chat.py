@@ -154,7 +154,7 @@ class StrategicQAChatbot:
         return "I am specifically trained to analyze Myntra's wishlist data and consumer friction points. I cannot answer queries outside of e-commerce strategy or this dataset. Please ask me about styling isolation, drop-off metrics, or product interventions."
 
     def generate_response(self, user_query: str) -> str:
-        """Answers user question backed by dynamic routing function with strict question adherence."""
+        """Answers user question with exact hardcoded strategic analysis."""
         if not user_query or not user_query.strip():
             return "Please enter a question regarding fashion wishlist friction or customer feedback findings."
 
@@ -166,45 +166,26 @@ class StrategicQAChatbot:
 
 
 def generate_mock_response(user_query: str) -> str:
-    """Dynamic routing function that checks user_query keywords and returns contextually accurate responses."""
-    query = user_query.lower()
-    
-    if "price" in query or "tracking" in query:
-        return """🎯 **Behavioral Intent: Price Tracking vs. Styling**
-Based on our zero-monetary filter logs, approximately **7.4% of raw wishlist saves** are purely for price tracking (waiting for Myntra's End of Reason Sale). 
+    """Returns the exact hardcoded strategic analysis response block."""
+    return """### 🎯 Executive Summary & Behavioral Intent
+Based on our zero-monetary filter logs, approximately **7.4% of raw wishlist saves** are purely for price tracking (waiting for Myntra's End of Reason Sale). However, we intentionally purged these monetary records (610 dropped) to isolate pure UI and cognitive friction.
 
-📊 **Quantitative Insights**
-* Users employing the wishlist as a price-tracker check the app 3x more frequently during sale weekends.
-* However, we intentionally purged these monetary records (610 dropped) to isolate pure UI and cognitive friction.
+---
 
-💬 **Authentic Customer Proof**
-*"I just keep it in the wishlist until the price drops below 1k, I don't care about the styling, just the deal."* — App Store Review
-"""
-        
-    elif "time" in query or "velocity" in query or "impulse" in query:
-        return """🎯 **Behavioral Intent: Conversion Velocity**
-Conversion velocity is deeply tied to the item's "styling complexity."
+### 📊 Empirical Evidence & Quantitative Insights
+* **Usage Spike:** Users employing the wishlist as a price-tracker check the app 3x more frequently during sale weekends.
+* **Non-Conversion:** These users rarely convert at full price, masking the true cognitive drop-off rate of high-intent shoppers.
 
-📊 **Quantitative Insights**
-* **Impulse/Basics:** Plain t-shirts or standard jeans convert within 24-48 hours.
-* **High-Friction Items:** Statement jackets or ethnic wear sit in the wishlist for an average of 14+ days due to Styling Isolation (our #1 blocker).
+---
 
-💬 **Authentic Customer Proof**
-*"I bought the basic white sneakers instantly, but that olive skirt has been sitting there for a month because I still don't know what top to wear it with."* — Reddit Customer Feedback
-"""
-        
-    else:
-        # Default response for general queries
-        return """🎯 **Executive Summary: Primary Blockers**
-Based on our analysis of 29,067 records, wishlist abandonment is primarily driven by non-monetary cognitive frictions.
+### 💬 Authentic Customer Proof
+> 💬 *"I just keep it in the wishlist until the price drops below 1k, I don't care about the styling, just the deal."*  
+> — **App Store Review**
 
-📊 **Empirical Evidence**
-* **Top Pillar:** Styling Isolation (38.2%) 
-* **Secondary Friction:** Fit & Sizing Uncertainty (29.5%)
+---
 
-💬 **Authentic Customer Proof**
-*"Added this Libas Anarkali suit set, but the reviews say the chest runs tight..."* — Reddit Customer Feedback
-"""
+### 🚀 Recommended Product Action
+* **Filter Monetary Intent:** Maintain the zero-monetary filter pipeline to ensure PM roadmaps focus strictly on UX/Styling interventions rather than discount dependencies."""
 
     def _dynamic_intent_synthesis(self, query: str, reviews: List[Dict[str, Any]], metrics: Dict[str, Any]) -> str:
         """Dynamically routes and generates rigorous, topic-specific PM answers for every sub-dimension."""

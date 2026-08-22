@@ -566,7 +566,7 @@ elif st.session_state.active_nav == "Strategic Q&A":
 
     st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
-    # Initialize Chatbot & Session State History (using st.session_state.messages)
+    # Initialize Chatbot & Session State History
     if "qa_chatbot" not in st.session_state:
         st.session_state.qa_chatbot = StrategicQAChatbot()
 
@@ -583,115 +583,85 @@ elif st.session_state.active_nav == "Strategic Q&A":
             }
         ]
 
-    # Callback for suggestion chips
-    def set_pending_query_app(q_text):
-        st.session_state.pending_prompt_app = q_text
+    # Callback for quick-suggestion chips
+    def send_chip_prompt_app(prompt_text):
+        st.session_state.messages.append({"role": "user", "content": prompt_text})
+        response = st.session_state.qa_chatbot.generate_response(prompt_text)
+        st.session_state.messages.append({"role": "assistant", "content": response})
 
-    # Prominent Search / Prompt Box at the Top of Chat
-    st.markdown(
-        """
-        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.25rem 1.25rem 0.75rem 1.25rem; margin-bottom: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-            <div style="font-size: 1rem; font-weight: 700; color: #0F172A; margin-bottom: 0.25rem;">
-                🔎 Ask the Intelligence Engine
-            </div>
-            <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 0.75rem;">
-                Type any question to analyze consumer sentiment and extract verbatim quotes from the 29,067 records:
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    # Header controls (Reset chat option)
+    if len(st.session_state.messages) > 1:
+        reset_col1, reset_col2 = st.columns([6, 1])
+        with reset_col2:
+            if st.button("🔄 New Chat", key="btn_reset_chat_app", use_container_width=True):
+                st.session_state.messages = [
+                    {
+                        "role": "assistant",
+                        "content": (
+                            "Hello! I am your Myntra Wishlist Strategic AI Copilot. "
+                            "I am connected to our 29,067 customer feedback records across Reddit (r/IndianFashionAddicts, r/TwoXIndia), "
+                            "YouTube try-on hauls, and App Store reviews. Ask me any strategic product question, search for customer quote evidence, "
+                            "or inquire about roadmap interventions!"
+                        ),
+                    }
+                ]
+                st.rerun()
 
-    with st.form("qa_top_search_form_app", clear_on_submit=True):
-        s_col1, s_col2 = st.columns([4.8, 1.2])
-        with s_col1:
-            top_query_input = st.text_input(
-                "Search Input",
-                placeholder="e.g., Why do shoppers hesitate to buy blazers? Or what are top size issues?",
-                label_visibility="collapsed",
-                key="top_q_input_app",
+    # 1. Render Chat History FIRST (Main vertical body)
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"], avatar="🛍️" if message["role"] == "assistant" else "👤"):
+            st.markdown(message["content"])
+
+    # 2. Quick Suggestion Chips (Only appear on fresh/initial chat)
+    if len(st.session_state.messages) <= 1:
+        st.markdown("<div style='font-size: 0.85rem; font-weight: 600; color: #64748B; margin-top: 1.25rem; margin-bottom: 0.5rem;'>💡 Suggested Topics to Explore (Click to ask):</div>", unsafe_allow_html=True)
+        chip_col1, chip_col2, chip_col3, chip_col4 = st.columns(4)
+        with chip_col1:
+            st.button(
+                "👗 Why Styling Isolation?",
+                key="chip_style_app",
+                use_container_width=True,
+                on_click=send_chip_prompt_app,
+                args=("Why is Styling Isolation the #1 reason users abandon their wishlists?",),
             )
-        with s_col2:
-            top_search_btn = st.form_submit_button("🔍 Ask Copilot", use_container_width=True, type="primary")
+        with chip_col2:
+            st.button(
+                "📏 Sizing Complaints?",
+                key="chip_fit_app",
+                use_container_width=True,
+                on_click=send_chip_prompt_app,
+                args=("What are the most frequent sizing and fit ambiguity complaints in the reviews?",),
+            )
+        with chip_col3:
+            st.button(
+                "📱 WhatsApp / Pinterest Leakage?",
+                key="chip_off_app",
+                use_container_width=True,
+                on_click=send_chip_prompt_app,
+                args=("How do users try to solve fashion hesitation off-platform on WhatsApp and Pinterest?",),
+            )
+        with chip_col4:
+            st.button(
+                "🚀 Complete the Look ROI?",
+                key="chip_roi_app",
+                use_container_width=True,
+                on_click=send_chip_prompt_app,
+                args=("What is the expected ROI and GMV recovery of the 'Complete the Look' MVP?",),
+            )
 
-    if top_search_btn and top_query_input.strip():
-        st.session_state.pending_prompt_app = top_query_input.strip()
+    # 3. Native Pinned Chat Input
+    if user_prompt := st.chat_input("Ask me about customer hesitation patterns...", key="chat_input_app"):
+        # Append and render user message immediately
+        st.session_state.messages.append({"role": "user", "content": user_prompt})
+        with st.chat_message("user", avatar="👤"):
+            st.markdown(user_prompt)
 
-    # Quick-prompt suggestion chips
-    st.markdown("<div style='font-size: 0.85rem; font-weight: 600; color: #64748B; margin-top: 0.5rem; margin-bottom: 0.5rem;'>💡 Quick Suggestion Chips (Click to ask):</div>", unsafe_allow_html=True)
-    chip_col1, chip_col2, chip_col3, chip_col4, chip_col5 = st.columns([1, 1, 1, 1, 0.5])
-    
-    with chip_col1:
-        st.button(
-            "👗 Why Styling Isolation?",
-            key="chip_style_app",
-            use_container_width=True,
-            on_click=set_pending_query_app,
-            args=("Why is Styling Isolation the #1 reason users abandon their wishlists?",),
-        )
-    with chip_col2:
-        st.button(
-            "📏 Sizing Complaints?",
-            key="chip_fit_app",
-            use_container_width=True,
-            on_click=set_pending_query_app,
-            args=("What are the most frequent sizing and fit ambiguity complaints in the reviews?",),
-        )
-    with chip_col3:
-        st.button(
-            "📱 WhatsApp / Pinterest Leakage?",
-            key="chip_off_app",
-            use_container_width=True,
-            on_click=set_pending_query_app,
-            args=("How do users try to solve fashion hesitation off-platform on WhatsApp and Pinterest?",),
-        )
-    with chip_col4:
-        st.button(
-            "🚀 Complete the Look ROI?",
-            key="chip_roi_app",
-            use_container_width=True,
-            on_click=set_pending_query_app,
-            args=("What is the expected ROI and GMV recovery of the 'Complete the Look' MVP?",),
-        )
-    with chip_col5:
-        if st.button("🔄 Reset", key="chip_clear_app", use_container_width=True):
-            st.session_state.messages = [
-                {
-                    "role": "assistant",
-                    "content": (
-                        "Hello! I am your Myntra Wishlist Strategic AI Copilot. "
-                        "I am connected to our 29,067 customer feedback records across Reddit (r/IndianFashionAddicts, r/TwoXIndia), "
-                        "YouTube try-on hauls, and App Store reviews. Ask me any strategic product question, search for customer quote evidence, "
-                        "or inquire about roadmap interventions!"
-                    ),
-                }
-            ]
-            st.session_state.pending_prompt_app = None
-            st.rerun()
-
-    st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
-
-    # Handle bottom chat_input
-    user_bottom_input = st.chat_input("Ask me about customer hesitation patterns...", key="chat_input_app")
-    if user_bottom_input and user_bottom_input.strip():
-        st.session_state.pending_prompt_app = user_bottom_input.strip()
-
-    # Process any pending prompt (from chips, top search form, or bottom input)
-    if st.session_state.get("pending_prompt_app"):
-        active_q = st.session_state.pending_prompt_app
-        st.session_state.pending_prompt_app = None
-
-        # Add user message
-        st.session_state.messages.append({"role": "user", "content": active_q})
-
-        # Generate AI Copilot response
-        ai_answer = st.session_state.qa_chatbot.generate_response(active_q)
-        st.session_state.messages.append({"role": "assistant", "content": ai_answer})
-
-    # Render complete conversation history
-    for msg in st.session_state.messages:
-        with st.chat_message(msg["role"], avatar="🛍️" if msg["role"] == "assistant" else "👤"):
-            st.markdown(msg["content"])
+        # Generate and render assistant response
+        with st.chat_message("assistant", avatar="🛍️"):
+            with st.spinner("Analyzing data lake & synthesizing response..."):
+                response = st.session_state.qa_chatbot.generate_response(user_prompt)
+                st.markdown(response)
+                st.session_state.messages.append({"role": "assistant", "content": response})
 
 # Footer
 st.markdown(FOOTER_HTML, unsafe_allow_html=True)

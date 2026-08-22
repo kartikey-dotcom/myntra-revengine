@@ -17,11 +17,15 @@ html, body, [class*="css"] {
     max-width: 1200px !important;
 }
 
-header[data-testid="stHeader"] {
-    background: transparent !important;
-}
+/* Streamlit default branding */
+#MainMenu {visibility: hidden;}
 
-#MainMenu, footer, header {visibility: hidden;}
+/* Ensure Chat Input & Bottom Toolbar is always 100% visible */
+div[data-testid="stChatInput"], div[data-testid="stBottom"], .stChatInput {
+    visibility: visible !important;
+    display: block !important;
+    z-index: 999999 !important;
+}
 
 /* Custom Interactive Navbar Row */
 .navbar-container {

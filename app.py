@@ -16,7 +16,12 @@ sys.path.insert(0, str(BASE_DIR))
 
 from src.database.db_manager import DatabaseManager
 from src.ui.styles import CUSTOM_CSS, FOOTER_HTML
-from src.ui.charts import build_donut_chart, build_channel_stacked_bar
+from src.ui.charts import (
+    build_donut_chart,
+    build_channel_stacked_bar,
+    build_performance_funnel,
+    build_traffic_trend_chart,
+)
 
 # Page configuration
 st.set_page_config(
@@ -429,6 +434,7 @@ elif st.session_state.active_nav == "Performance":
 
     st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
+    # Conversion Funnel Chart
     st.markdown(
         """
         <div class="chart-card">
@@ -436,16 +442,8 @@ elif st.session_state.active_nav == "Performance":
         """,
         unsafe_allow_html=True,
     )
-    funnel_fig = go.Figure(
-        go.Funnel(
-            y=["Wishlist Saved", "Product Viewed >3x", "Look/Outfit Visualized", "Added to Cart", "Final Order Placed"],
-            x=[1200000, 720000, 240000, 110000, 50400],
-            textinfo="value+percent initial",
-            marker=dict(colors=["#1E293B", "#475569", "#FF7597", "#FF2A6D", "#E11D48"]),
-        )
-    )
-    funnel_fig.update_layout(margin=dict(t=20, b=20, l=20, r=20), height=320, paper_bgcolor="rgba(0,0,0,0)")
-    st.plotly_chart(funnel_fig, use_container_width=True)
+    funnel_fig = build_performance_funnel()
+    st.plotly_chart(funnel_fig, use_container_width=True, config={"displayModeBar": False})
     st.markdown("</div>", unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
@@ -503,6 +501,7 @@ elif st.session_state.active_nav == "Traffic":
 
     st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
+    # Ingestion timeline chart
     st.markdown(
         """
         <div class="chart-card">
@@ -510,13 +509,8 @@ elif st.session_state.active_nav == "Traffic":
         """,
         unsafe_allow_html=True,
     )
-    weeks = [f"Week {i}" for i in range(1, 9)]
-    trend_fig = go.Figure()
-    trend_fig.add_trace(go.Scatter(x=weeks, y=[380, 420, 390, 450, 410, 430, 440, 426], mode="lines+markers", name="Reddit", line=dict(color="#1E293B", width=3)))
-    trend_fig.add_trace(go.Scatter(x=weeks, y=[280, 310, 300, 320, 340, 310, 330, 340], mode="lines+markers", name="YouTube", line=dict(color="#FF7597", width=3)))
-    trend_fig.add_trace(go.Scatter(x=weeks, y=[260, 290, 310, 300, 290, 310, 300, 308], mode="lines+markers", name="App Store", line=dict(color="#FF2A6D", width=3)))
-    trend_fig.update_layout(height=300, margin=dict(t=20, b=20, l=20, r=20), paper_bgcolor="rgba(0,0,0,0)")
-    st.plotly_chart(trend_fig, use_container_width=True)
+    trend_fig = build_traffic_trend_chart()
+    st.plotly_chart(trend_fig, use_container_width=True, config={"displayModeBar": False})
     st.markdown("</div>", unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------

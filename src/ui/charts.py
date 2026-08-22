@@ -6,7 +6,6 @@ import plotly.graph_objects as go
 
 def build_donut_chart(category_counts: dict) -> go.Figure:
     """Builds a high-polish Donut chart for Cognitive Friction Categories."""
-    # Display labels & colors matching the mockup
     label_map = {
         "Styling_Isolation": "Styling Isolation",
         "Fit_Body_Ambiguity": "Fit/Body Ambiguity",
@@ -14,12 +13,9 @@ def build_donut_chart(category_counts: dict) -> go.Figure:
         "Occasion_Disconnect": "Occasion Disconnect",
     }
 
-    # Order by specific design alignment
     ordered_keys = ["Styling_Isolation", "Fit_Body_Ambiguity", "Catalog_Clutter", "Occasion_Disconnect"]
     labels = [label_map.get(k, k) for k in ordered_keys if k in category_counts]
     values = [category_counts.get(k, 0) for k in ordered_keys if k in category_counts]
-
-    # Color palette matching the mockup (hot pink -> medium pink -> light pink -> pale pink)
     colors = ["#FF2A6D", "#FF7597", "#FFAAB9", "#FFD5DC"]
 
     fig = go.Figure(
@@ -53,17 +49,12 @@ def build_donut_chart(category_counts: dict) -> go.Figure:
 
 def build_channel_stacked_bar(df: pd.DataFrame) -> go.Figure:
     """Builds a stacked bar chart displaying channel distribution across friction categories."""
-    # Group data by category and channel
     category_order = ["Styling_Isolation", "Fit_Body_Ambiguity", "Catalog_Clutter", "Occasion_Disconnect"]
     display_names = ["Styling Isolation", "Fit/Body", "Clutter", "Occasion"]
 
-    # Calculate percentages per category
     cross = pd.crosstab(df["primary_category"], df["source_channel"], normalize="index") * 100
-
-    # Ensure categories exist in cross table
     cross = cross.reindex(category_order).fillna(0)
 
-    # Channels: Reddit (Navy), YouTube (Soft Pink), App Store (Hot Pink)
     fig = go.Figure()
 
     # Reddit (Bottom stack - Navy)
@@ -124,6 +115,57 @@ def build_channel_stacked_bar(df: pd.DataFrame) -> go.Figure:
             showgrid=True,
             gridcolor="#F1F5F9",
             tickfont=dict(size=10, color="#94A3B8", family="Inter, sans-serif"),
+        ),
+    )
+
+    return fig
+
+
+def build_performance_funnel() -> go.Figure:
+    """Builds the conversion funnel chart using correct Plotly singular 'color' property."""
+    fig = go.Figure(
+        go.Funnel(
+            y=["Wishlist Saved", "Product Viewed >3x", "Look/Outfit Visualized", "Added to Cart", "Final Order Placed"],
+            x=[1200000, 720000, 240000, 110000, 50400],
+            textinfo="value+percent initial",
+            marker=dict(
+                color=["#1E293B", "#475569", "#FF7597", "#FF2A6D", "#E11D48"],
+                line=dict(color="#FFFFFF", width=2),
+            ),
+            connector=dict(line=dict(color="#CBD5E1", width=1, dash="dot")),
+        )
+    )
+
+    fig.update_layout(
+        margin=dict(t=20, b=20, l=20, r=20),
+        height=320,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+    )
+
+    return fig
+
+
+def build_traffic_trend_chart() -> go.Figure:
+    """Builds the weekly multi-channel ingestion volume line chart."""
+    weeks = [f"Week {i}" for i in range(1, 9)]
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=weeks, y=[380, 420, 390, 450, 410, 430, 440, 426], mode="lines+markers", name="Reddit", line=dict(color="#1E293B", width=3)))
+    fig.add_trace(go.Scatter(x=weeks, y=[280, 310, 300, 320, 340, 310, 330, 340], mode="lines+markers", name="YouTube", line=dict(color="#FF7597", width=3)))
+    fig.add_trace(go.Scatter(x=weeks, y=[260, 290, 310, 300, 290, 310, 300, 308], mode="lines+markers", name="App Store", line=dict(color="#FF2A6D", width=3)))
+
+    fig.update_layout(
+        height=300,
+        margin=dict(t=20, b=20, l=20, r=20),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.15,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=11, color="#64748B", family="Inter, sans-serif"),
         ),
     )
 

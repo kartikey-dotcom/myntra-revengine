@@ -125,7 +125,7 @@ def build_performance_funnel() -> go.Figure:
     """Builds the conversion funnel chart using correct Plotly singular 'color' property."""
     fig = go.Figure(
         go.Funnel(
-            y=["Wishlist Saved", "Product Viewed >3x", "Look/Outfit Visualized", "Added to Cart", "Final Order Placed"],
+            y=["Wishlist Saved", "Product Viewed >3x", "Engaged with 'Similar Items' / Style Cast", "Added to Cart", "Final Order Placed"],
             x=[1200000, 720000, 240000, 110000, 50400],
             textinfo="value+percent initial",
             marker=dict(

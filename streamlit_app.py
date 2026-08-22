@@ -23,6 +23,7 @@ from src.ui.charts import (
     build_performance_funnel,
     build_traffic_trend_chart,
 )
+from src.qa.engine_chat import StrategicQAChatbot, generate_mock_response
 
 # Page configuration
 st.set_page_config(

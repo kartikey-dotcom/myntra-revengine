@@ -585,6 +585,10 @@ elif st.session_state.active_nav == "Strategic Q&A":
     chat_tab, curated_tab = st.tabs(["💬 Interactive AI Chatbot (GPT Mode)", "📚 Verified PM Strategic Library"])
 
     with chat_tab:
+        # Callback for suggestion chips
+        def set_pending_query_app(q_text):
+            st.session_state.pending_prompt_app = q_text
+
         # Prominent Search / Prompt Box at the Top of Chat
         st.markdown(
             """
@@ -612,26 +616,45 @@ elif st.session_state.active_nav == "Strategic Q&A":
             with s_col2:
                 top_search_btn = st.form_submit_button("🔍 Ask Copilot", use_container_width=True, type="primary")
 
+        if top_search_btn and top_query_input.strip():
+            st.session_state.pending_prompt_app = top_query_input.strip()
+
         # Quick-prompt suggestion chips
         st.markdown("<div style='font-size: 0.85rem; font-weight: 600; color: #64748B; margin-top: 0.5rem; margin-bottom: 0.5rem;'>💡 Quick Suggestion Chips (Click to ask):</div>", unsafe_allow_html=True)
         chip_col1, chip_col2, chip_col3, chip_col4, chip_col5 = st.columns([1, 1, 1, 1, 0.5])
         
-        prompt_to_submit = None
-        if top_search_btn and top_query_input.strip():
-            prompt_to_submit = top_query_input.strip()
-
         with chip_col1:
-            if st.button("👗 Why Styling Isolation?", key="chip_style_app", use_container_width=True):
-                prompt_to_submit = "Why is Styling Isolation the #1 reason users abandon their wishlists?"
+            st.button(
+                "👗 Why Styling Isolation?",
+                key="chip_style_app",
+                use_container_width=True,
+                on_click=set_pending_query_app,
+                args=("Why is Styling Isolation the #1 reason users abandon their wishlists?",),
+            )
         with chip_col2:
-            if st.button("📏 Sizing Complaints?", key="chip_fit_app", use_container_width=True):
-                prompt_to_submit = "What are the most frequent sizing and fit ambiguity complaints in the reviews?"
+            st.button(
+                "📏 Sizing Complaints?",
+                key="chip_fit_app",
+                use_container_width=True,
+                on_click=set_pending_query_app,
+                args=("What are the most frequent sizing and fit ambiguity complaints in the reviews?",),
+            )
         with chip_col3:
-            if st.button("📱 WhatsApp / Pinterest Leakage?", key="chip_off_app", use_container_width=True):
-                prompt_to_submit = "How do users try to solve fashion hesitation off-platform on WhatsApp and Pinterest?"
+            st.button(
+                "📱 WhatsApp / Pinterest Leakage?",
+                key="chip_off_app",
+                use_container_width=True,
+                on_click=set_pending_query_app,
+                args=("How do users try to solve fashion hesitation off-platform on WhatsApp and Pinterest?",),
+            )
         with chip_col4:
-            if st.button("🚀 Complete the Look ROI?", key="chip_roi_app", use_container_width=True):
-                prompt_to_submit = "What is the expected ROI and GMV recovery of the 'Complete the Look' MVP?"
+            st.button(
+                "🚀 Complete the Look ROI?",
+                key="chip_roi_app",
+                use_container_width=True,
+                on_click=set_pending_query_app,
+                args=("What is the expected ROI and GMV recovery of the 'Complete the Look' MVP?",),
+            )
         with chip_col5:
             if st.button("🔄 Reset", key="chip_clear_app", use_container_width=True):
                 st.session_state.chat_messages = [
@@ -640,30 +663,32 @@ elif st.session_state.active_nav == "Strategic Q&A":
                         "content": "👋 Chat reset. Ask me anything about customer hesitation patterns, styling isolation, or sizing feedback!",
                     }
                 ]
+                st.session_state.pending_prompt_app = None
                 st.rerun()
 
         st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
 
-        # Handle user text input from chat_input or top form or suggestion chips
+        # Handle bottom chat_input
         user_bottom_input = st.chat_input("Or type your question here...", key="chat_input_app")
-        final_query = prompt_to_submit or user_bottom_input
+        if user_bottom_input and user_bottom_input.strip():
+            st.session_state.pending_prompt_app = user_bottom_input.strip()
 
-        if final_query:
-            # Append user message
-            st.session_state.chat_messages.append({"role": "user", "content": final_query})
+        # Process any pending prompt (from chips, top search form, or bottom input)
+        if st.session_state.get("pending_prompt_app"):
+            active_q = st.session_state.pending_prompt_app
+            st.session_state.pending_prompt_app = None
 
-        # Render conversation history
+            # Add user message
+            st.session_state.chat_messages.append({"role": "user", "content": active_q})
+
+            # Generate AI Copilot response
+            ai_answer = st.session_state.qa_chatbot.generate_response(active_q)
+            st.session_state.chat_messages.append({"role": "assistant", "content": ai_answer})
+
+        # Render complete conversation history
         for msg in st.session_state.chat_messages:
             with st.chat_message(msg["role"], avatar="🛍️" if msg["role"] == "assistant" else "👤"):
                 st.markdown(msg["content"])
-
-        # If a query was just submitted, compute and show answer
-        if final_query:
-            with st.chat_message("assistant", avatar="🛍️"):
-                with st.spinner("🔍 Searching 29k customer reviews & synthesizing strategic insight..."):
-                    ai_answer = st.session_state.qa_chatbot.generate_response(final_query)
-                    st.markdown(ai_answer)
-                    st.session_state.chat_messages.append({"role": "assistant", "content": ai_answer})
 
     with curated_tab:
         st.markdown("<div style='font-size: 0.95rem; color: #475569; margin-bottom: 1rem;'>Pre-verified executive answers to the 5 primary Growth & UX questions:</div>", unsafe_allow_html=True)

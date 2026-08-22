@@ -69,8 +69,13 @@ YOUTUBE_QUERIES = [
 ]
 
 # API Credentials (Optional - Graceful fallback if missing)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY", "")
+GOOGLE_API_KEY = GEMINI_API_KEY
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+
 REDDIT_CLIENT_ID = os.getenv("REDDIT_CLIENT_ID", "")
 REDDIT_CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET", "")
 REDDIT_USER_AGENT = os.getenv("REDDIT_USER_AGENT", "MyntraWishlistBot/1.0")
 
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY", "")
+

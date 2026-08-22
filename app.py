@@ -458,14 +458,19 @@ elif st.session_state.active_nav == "Traffic":
         unsafe_allow_html=True,
     )
 
+    channels_data = metrics.get("channels", {})
+    reddit_vol = channels_data.get("reddit", 11772)
+    yt_vol = channels_data.get("youtube", 8806)
+    app_vol = channels_data.get("app_store", 8489)
+
     t1, t2, t3 = st.columns(3)
     with t1:
         st.markdown(
-            """
+            f"""
             <div class="kpi-card">
                 <div class="kpi-title">Reddit Discussions (PRAW)</div>
                 <div class="kpi-value-row">
-                    <div class="kpi-value">3,346</div>
+                    <div class="kpi-value">{reddit_vol:,}</div>
                     <div class="badge badge-baseline">🟢 Active Stream</div>
                 </div>
             </div>
@@ -474,11 +479,11 @@ elif st.session_state.active_nav == "Traffic":
         )
     with t2:
         st.markdown(
-            """
+            f"""
             <div class="kpi-card">
                 <div class="kpi-title">YouTube Comments (API v3)</div>
                 <div class="kpi-value-row">
-                    <div class="kpi-value">2,530</div>
+                    <div class="kpi-value">{yt_vol:,}</div>
                     <div class="badge badge-baseline">🟢 Quota Normal</div>
                 </div>
             </div>
@@ -487,11 +492,11 @@ elif st.session_state.active_nav == "Traffic":
         )
     with t3:
         st.markdown(
-            """
+            f"""
             <div class="kpi-card">
                 <div class="kpi-title">App Store & Google Play</div>
                 <div class="kpi-value-row">
-                    <div class="kpi-value">2,368</div>
+                    <div class="kpi-value">{app_vol:,}</div>
                     <div class="badge badge-baseline">🟢 Synced</div>
                 </div>
             </div>

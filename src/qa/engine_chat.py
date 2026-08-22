@@ -150,29 +150,15 @@ class StrategicQAChatbot:
         return False
 
     def generate_out_of_scope_response(self, user_query: str) -> str:
-        """Returns a polite, strictly framed out-of-scope response guiding the user back to domain topics."""
-        return f"""### ⚠️ Query Out of Scope
-
-I am the **Myntra Wishlist Strategic AI Copilot**, designed exclusively to analyze **e-commerce customer hesitation, fashion shopping behavior, and growth product intelligence** across our **29,067 verified customer feedback records**.
-
-Your query (`"{user_query}"`) falls outside the scope of this fashion intelligence dataset.
-
----
-
-### 💡 What You Can Ask Me:
-* 👗 **Styling Isolation:** *"Why do high-intent shoppers hesitate on standalone items?"*
-* 📏 **Fit & Sizing Ambiguity:** *"What are the top sizing complaints from Reddit & YouTube?"*
-* 📱 **Off-Platform Leakage:** *"How do users solve outfit uncertainty on WhatsApp or Pinterest?"*
-* 📦 **Catalog Clutter:** *"What do reviews say about search filters and duplicate listings?"*
-* 🚀 **Roadmap Interventions:** *"What is the projected GMV impact of the 'Complete the Look' MVP?"*
-* 💬 **Verbatim Search:** *"Show me authentic customer quotes about blazer styling or shoe sizing."*"""
+        """Returns the exact refusal template for out-of-scope queries."""
+        return "I am specifically trained to analyze Myntra's wishlist data and consumer friction points. I cannot answer queries outside of e-commerce strategy or this dataset. Please ask me about styling isolation, drop-off metrics, or product interventions."
 
     def generate_response(self, user_query: str) -> str:
-        """Answers user question backed by retrieved reviews and AI synthesis with domain guardrails."""
+        """Answers user question backed by retrieved reviews and AI synthesis with strict domain guardrails."""
         if not user_query or not user_query.strip():
             return "Please enter a question regarding fashion wishlist friction or customer feedback findings."
 
-        # Guardrail: Check domain relevance
+        # Strict Refusal Guardrail: Check domain relevance
         if not self.is_query_relevant(user_query):
             return self.generate_out_of_scope_response(user_query)
 
@@ -188,31 +174,27 @@ Your query (`"{user_query}"`) falls outside the scope of this fashion intelligen
             )
         evidence_str = "\n\n".join(context_blocks) if context_blocks else "No specific text matches found. Use general data lake findings."
 
-        system_prompt = f"""You are the backend AI Intelligence & Strategic Growth Copilot for the 'Myntra Wishlist Discovery Engine'.
-You have analyzed a data lake of {metrics.get('total', 29067):,} real customer feedback records across Reddit (r/IndianFashionAddicts, r/TwoXIndia), YouTube try-on haul comments, and App Store reviews.
+        system_prompt = f"""You are an elite AI Product Analyst for Myntra's Growth Team.
 
-Key Verified Findings:
-- Total Non-Monetary Friction Records: {metrics.get('total', 29067):,}
-- Primary Friction Pillar: Styling Isolation ({metrics.get('styling_share', '38.2%')}) — inability to pair items with existing wardrobe.
-- Secondary Friction: Fit & Body Ambiguity ({metrics.get('fit_share', '29.5%')}) — fear of return hassles, inaccurate size charts.
-- Catalog Clutter (16.2%): Duplicate listings, stock photo lighting mismatch.
-- Occasion Disconnect (16.2%): Impulsive saves with no immediate wear occasion.
-- Zero-Monetary Purge: 2,250 pure price/coupon records were purged to focus strictly on UX/product blockers.
+Knowledge Domain:
+You only have access to insights regarding Myntra Wishlist abandonment across our 29,067 customer feedback records (Reddit r/IndianFashionAddicts & r/TwoXIndia, YouTube try-on hauls, App Store reviews), specifically our 4 cognitive friction pillars:
+1. Styling Isolation (39.1%): Inability to pair items with existing wardrobe or separates.
+2. Fit/Body Ambiguity (28.8%): Uncertainty in sizing, fear of return hassle, lack of body-type visualization.
+3. Catalog Clutter (16.2%): Impulsive bookmarking, duplicate listings, search fatigue.
+4. Occasion Disconnect (15.8%): Seasonal mismatch, aspirational saves with no immediate wear event.
 
-CRITICAL SCOPE RULE:
-If the user asks an irrelevant question that is NOT related to fashion e-commerce, wishlist dynamics, sizing/styling friction, customer reviews, or growth product strategy (for example: questions about sports celebrities, general trivia, programming, unrelated news), DO NOT fabricate or force a fashion answer. Explicitly state that the topic is outside the scope of the Myntra Wishlist Intelligence Engine.
+Strict Refusal Protocol:
+If the user asks ANY question unrelated to Myntra, fashion e-commerce, product management, or this specific wishlist dataset (e.g. asking for recipes, coding help, general knowledge, sports, celebrities, or weather), you MUST refuse using EXACTLY this response:
+"I am specifically trained to analyze Myntra's wishlist data and consumer friction points. I cannot answer queries outside of e-commerce strategy or this dataset. Please ask me about styling isolation, drop-off metrics, or product interventions."
 
-Retrieved Customer Evidence for this query:
+Retrieved Customer Evidence:
 {evidence_str}
 
-Instructions:
-1. Answer the user's question with deep Product Management rigor and strategic clarity.
-2. Structure your response into:
-   - 🎯 **Executive Summary & Behavioral Intent** (Direct answer)
-   - 📊 **Empirical Evidence & Quantitative Insights** (Mention percentages, channel differences)
-   - 💬 **Authentic Customer Quotes** (Cite 1-2 exact quotes from Reddit/YouTube/App Store)
-   - 🚀 **Recommended Product Action** (Specific feature intervention like Complete the Look, Virtual Fitting, or Wardrobe Sync)
-3. Keep the tone authoritative, data-backed, and executive-ready.
+Tone & Formatting Instructions:
+1. Deliver concise, highly analytical, PM-focused answers.
+2. Format beautifully using markdown bolding, crisp bullet points, and data metrics.
+3. Include authentic customer verbatim quotes where relevant to ground insights.
+4. Suggest high-leverage product interventions (such as 'Complete the Look' AI Bundling, Size Transparency, or Wardrobe Compatibility Scoring).
 """
 
         # Try LLM inference with fallback

@@ -566,18 +566,19 @@ elif st.session_state.active_nav == "Strategic Q&A":
 
     st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
-    # Initialize Chatbot & Session State History
+    # Initialize Chatbot & Session State History (using st.session_state.messages)
     if "qa_chatbot" not in st.session_state:
         st.session_state.qa_chatbot = StrategicQAChatbot()
 
-    if "chat_messages" not in st.session_state:
-        st.session_state.chat_messages = [
+    if "messages" not in st.session_state:
+        st.session_state.messages = [
             {
                 "role": "assistant",
                 "content": (
-                    "👋 **Hello! I am your Myntra Wishlist Strategic AI Copilot.**\n\n"
-                    "I am connected to our **29,067 customer feedback records** across Reddit (`r/IndianFashionAddicts`, `r/TwoXIndia`), YouTube try-on hauls, and App Store reviews.\n\n"
-                    "Ask me any strategic product question, search for customer quote evidence, or inquire about roadmap interventions!"
+                    "Hello! I am your Myntra Wishlist Strategic AI Copilot. "
+                    "I am connected to our 29,067 customer feedback records across Reddit (r/IndianFashionAddicts, r/TwoXIndia), "
+                    "YouTube try-on hauls, and App Store reviews. Ask me any strategic product question, search for customer quote evidence, "
+                    "or inquire about roadmap interventions!"
                 ),
             }
         ]
@@ -654,10 +655,15 @@ elif st.session_state.active_nav == "Strategic Q&A":
         )
     with chip_col5:
         if st.button("🔄 Reset", key="chip_clear_app", use_container_width=True):
-            st.session_state.chat_messages = [
+            st.session_state.messages = [
                 {
                     "role": "assistant",
-                    "content": "👋 Chat reset. Ask me anything about customer hesitation patterns, styling isolation, or sizing feedback!",
+                    "content": (
+                        "Hello! I am your Myntra Wishlist Strategic AI Copilot. "
+                        "I am connected to our 29,067 customer feedback records across Reddit (r/IndianFashionAddicts, r/TwoXIndia), "
+                        "YouTube try-on hauls, and App Store reviews. Ask me any strategic product question, search for customer quote evidence, "
+                        "or inquire about roadmap interventions!"
+                    ),
                 }
             ]
             st.session_state.pending_prompt_app = None
@@ -666,7 +672,7 @@ elif st.session_state.active_nav == "Strategic Q&A":
     st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
 
     # Handle bottom chat_input
-    user_bottom_input = st.chat_input("Or type your question here...", key="chat_input_app")
+    user_bottom_input = st.chat_input("Ask me about customer hesitation patterns...", key="chat_input_app")
     if user_bottom_input and user_bottom_input.strip():
         st.session_state.pending_prompt_app = user_bottom_input.strip()
 
@@ -676,14 +682,14 @@ elif st.session_state.active_nav == "Strategic Q&A":
         st.session_state.pending_prompt_app = None
 
         # Add user message
-        st.session_state.chat_messages.append({"role": "user", "content": active_q})
+        st.session_state.messages.append({"role": "user", "content": active_q})
 
         # Generate AI Copilot response
         ai_answer = st.session_state.qa_chatbot.generate_response(active_q)
-        st.session_state.chat_messages.append({"role": "assistant", "content": ai_answer})
+        st.session_state.messages.append({"role": "assistant", "content": ai_answer})
 
     # Render complete conversation history
-    for msg in st.session_state.chat_messages:
+    for msg in st.session_state.messages:
         with st.chat_message(msg["role"], avatar="🛍️" if msg["role"] == "assistant" else "👤"):
             st.markdown(msg["content"])
 

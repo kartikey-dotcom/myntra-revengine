@@ -54,8 +54,8 @@ if "active_nav" not in st.session_state:
 # -----------------------------------------------------------------------------
 # TOP NAVIGATION BAR (CLICKABLE & INTERACTIVE)
 # -----------------------------------------------------------------------------
-nav_col1, nav_col2, nav_col3, nav_col4, nav_col5, nav_col6, nav_col7, nav_col8 = st.columns(
-    [2.6, 1.2, 1.0, 1.1, 1.1, 1.6, 0.5, 0.5]
+nav_col1, nav_col2, nav_col3, nav_col4, nav_col5, nav_col6 = st.columns(
+    [3.0, 1.3, 1.1, 1.2, 1.2, 1.6]
 )
 
 with nav_col1:
@@ -110,21 +110,6 @@ with nav_col6:
     ):
         st.session_state.active_nav = "Strategic Q&A"
         st.rerun()
-
-with nav_col7:
-    with st.popover("🔔", use_container_width=True):
-        st.markdown("### 🔔 System Alerts")
-        st.info("⚠️ **Friction Alert:** Styling Isolation represents 38.2% of total wishlist drop-offs.")
-        st.success("✅ **QA Audit Passed:** 100.0% Zero-Monetary Purity verified.")
-        st.caption("Data Lake last refreshed: Just now")
-
-with nav_col8:
-    with st.popover("👤", use_container_width=True):
-        st.markdown("### 👤 User Profile")
-        st.markdown("**Kartikey**")
-        st.caption("Principal Growth Product Manager")
-        st.divider()
-        st.markdown("• Role: Growth Analytics Lead\n• Org: Myntra Core Discovery\n• Workspace: Production Lake")
 
 st.markdown("<hr style='margin-top: 0.2rem; margin-bottom: 1.5rem; border-color: #E2E8F0;'>", unsafe_allow_html=True)
 

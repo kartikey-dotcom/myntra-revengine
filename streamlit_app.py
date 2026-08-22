@@ -565,19 +565,6 @@ elif st.session_state.active_nav == "Revenue":
         )
 
 # -----------------------------------------------------------------------------
-# TAB 5: STRATEGIC PM Q&A VIEW
-# -----------------------------------------------------------------------------
-elif st.session_state.active_nav == "Strategic Q&A":
-    st.markdown(
-        """
-        <div class="page-title">🤖 Ask the Engine: Strategic Product Q&A</div>
-        <div class="page-subtitle">Synthesized AI intelligence answering key Growth, Sizing & Styling questions from 29,067 customer hesitation signals</div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Top summary metrics for Q&A
-# -----------------------------------------------------------------------------
 # TAB 5: STRATEGIC PM Q&A & AI COPILOT VIEW (GPT MODE)
 # -----------------------------------------------------------------------------
 elif st.session_state.active_nav == "Strategic Q&A":
@@ -648,11 +635,40 @@ elif st.session_state.active_nav == "Strategic Q&A":
     chat_tab, curated_tab = st.tabs(["💬 Interactive AI Chatbot (GPT Mode)", "📚 Verified PM Strategic Library"])
 
     with chat_tab:
+        # Prominent Search / Prompt Box at the Top of Chat
+        st.markdown(
+            """
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.25rem 1.25rem 0.75rem 1.25rem; margin-bottom: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <div style="font-size: 1rem; font-weight: 700; color: #0F172A; margin-bottom: 0.25rem;">
+                    🔎 Ask the Intelligence Engine
+                </div>
+                <div style="font-size: 0.85rem; color: #64748B; margin-bottom: 0.75rem;">
+                    Type any question to analyze consumer sentiment and extract verbatim quotes from the 29,067 records:
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        with st.form("qa_top_search_form", clear_on_submit=True):
+            s_col1, s_col2 = st.columns([4.8, 1.2])
+            with s_col1:
+                top_query_input = st.text_input(
+                    "Search Input",
+                    placeholder="e.g., Why do shoppers hesitate to buy blazers? Or what are top size issues?",
+                    label_visibility="collapsed",
+                )
+            with s_col2:
+                top_search_btn = st.form_submit_button("🔍 Ask Copilot", use_container_width=True, type="primary")
+
         # Quick-prompt suggestion chips
-        st.markdown("<div style='font-size: 0.85rem; font-weight: 600; color: #64748B; margin-bottom: 0.5rem;'>💡 Recommended Queries (Click to ask):</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.85rem; font-weight: 600; color: #64748B; margin-top: 0.5rem; margin-bottom: 0.5rem;'>💡 Quick Suggestion Chips (Click to ask):</div>", unsafe_allow_html=True)
         chip_col1, chip_col2, chip_col3, chip_col4, chip_col5 = st.columns([1, 1, 1, 1, 0.5])
         
         prompt_to_submit = None
+        if top_search_btn and top_query_input.strip():
+            prompt_to_submit = top_query_input.strip()
+
         with chip_col1:
             if st.button("👗 Why Styling Isolation?", key="chip_style", use_container_width=True):
                 prompt_to_submit = "Why is Styling Isolation the #1 reason users abandon their wishlists?"
@@ -675,24 +691,23 @@ elif st.session_state.active_nav == "Strategic Q&A":
                 ]
                 st.rerun()
 
-        st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
+
+        # Handle user text input from chat_input or top form or suggestion chips
+        user_bottom_input = st.chat_input("Or type your question here...")
+        final_query = prompt_to_submit or user_bottom_input
+
+        if final_query:
+            # Append user message
+            st.session_state.chat_messages.append({"role": "user", "content": final_query})
 
         # Render conversation history
         for msg in st.session_state.chat_messages:
             with st.chat_message(msg["role"], avatar="🛍️" if msg["role"] == "assistant" else "👤"):
                 st.markdown(msg["content"])
 
-        # Handle user text input or chip click
-        user_input = st.chat_input("Ask any question about customer reviews, hesitation patterns, or feature recommendations...")
-        final_query = prompt_to_submit or user_input
-
+        # If a query was just submitted, compute and show answer
         if final_query:
-            # Append user message
-            st.session_state.chat_messages.append({"role": "user", "content": final_query})
-            with st.chat_message("user", avatar="👤"):
-                st.markdown(final_query)
-
-            # Generate AI response backed by reviews
             with st.chat_message("assistant", avatar="🛍️"):
                 with st.spinner("🔍 Searching 29k customer reviews & synthesizing strategic insight..."):
                     ai_answer = st.session_state.qa_chatbot.generate_response(final_query)

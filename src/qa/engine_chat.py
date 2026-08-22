@@ -100,8 +100,82 @@ class StrategicQAChatbot:
         except Exception:
             return {"total": 29067, "styling_share": "38.2%", "fit_share": "29.5%"}
 
+    def is_query_relevant(self, query: str) -> bool:
+        """Determines if a user query falls within the scope of fashion e-commerce and wishlist intelligence."""
+        q = query.lower().strip()
+
+        # Whitelist of domain-relevant keywords & concepts
+        relevant_keywords = {
+            # Fashion items & garments
+            "fashion", "cloth", "clothes", "clothing", "dress", "dresses", "shirt", "shirts", "pant", "pants",
+            "trousers", "jacket", "jackets", "skirt", "skirts", "jeans", "top", "tops", "kurti", "kurtis",
+            "anarkali", "suit", "blazer", "blazers", "sweater", "sweaters", "shoes", "boots", "heels", "sneakers",
+            "accessories", "jewelry", "bag", "handbag", "saree", "lehenga", "fabric", "cotton", "linen", "silk",
+            "polyester", "outfit", "outfits", "wardrobe", "wear", "look", "looks", "co-ord", "aesthetic",
+            # Friction & Psychology
+            "wishlist", "wishlists", "cart", "bag", "checkout", "buy", "buying", "purchase", "purchases",
+            "abandon", "abandonment", "hesitate", "hesitation", "dilemma", "confused", "confusion",
+            "style", "styling", "isolation", "pair", "pairing", "match", "matching", "combine", "separate",
+            "fit", "sizing", "size", "body", "measure", "measurement", "petite", "tall", "curvy", "tight", "loose",
+            "waist", "bust", "chest", "inseam", "stretch", "height", "return", "returns", "exchange",
+            "occasion", "event", "party", "office", "formal", "casual", "brunch", "vacation", "trip", "goa", "wedding",
+            "clutter", "duplicate", "duplicates", "search", "filter", "filters", "photo", "photos", "lighting",
+            # E-commerce & Analytics
+            "myntra", "zara", "h&m", "hm", "mango", "roadster", "libas", "sassafras", "veromoda", "brand", "brands",
+            "reddit", "youtube", "app store", "play store", "pinterest", "whatsapp", "haul", "hauls", "review",
+            "reviews", "feedback", "verbatim", "quote", "quotes", "scrape", "scraping", "lake", "database",
+            "metric", "metrics", "cvr", "conversion", "aov", "gmv", "funnel", "bounce", "growth", "revenue",
+            "prd", "mvp", "feature", "features", "roadmap", "complete the look", "recommendation", "roi",
+            "non-monetary", "monetary", "price", "discount", "coupon", "sale", "drop-off", "leakage",
+            "dataset", "records", "sample", "taxonomy", "pillar", "pillars", "customer", "shopper", "user", "users",
+        }
+
+        # Check for direct word/substring matches
+        tokens = set(re.findall(r"\w+", q))
+        for token in tokens:
+            if token in relevant_keywords:
+                return True
+            for kw in relevant_keywords:
+                if len(token) >= 4 and (token in kw or kw in token):
+                    return True
+
+        # Check for multi-word phrases
+        phrases = [
+            "why do", "how do", "what is", "tell me about", "can you explain",
+            "how to fix", "what should we build", "customer feedback", "drop off"
+        ]
+        if any(p in q for p in phrases) and any(kw in q for kw in relevant_keywords):
+            return True
+
+        return False
+
+    def generate_out_of_scope_response(self, user_query: str) -> str:
+        """Returns a polite, strictly framed out-of-scope response guiding the user back to domain topics."""
+        return f"""### ⚠️ Query Out of Scope
+
+I am the **Myntra Wishlist Strategic AI Copilot**, designed exclusively to analyze **e-commerce customer hesitation, fashion shopping behavior, and growth product intelligence** across our **29,067 verified customer feedback records**.
+
+Your query (`"{user_query}"`) falls outside the scope of this fashion intelligence dataset.
+
+---
+
+### 💡 What You Can Ask Me:
+* 👗 **Styling Isolation:** *"Why do high-intent shoppers hesitate on standalone items?"*
+* 📏 **Fit & Sizing Ambiguity:** *"What are the top sizing complaints from Reddit & YouTube?"*
+* 📱 **Off-Platform Leakage:** *"How do users solve outfit uncertainty on WhatsApp or Pinterest?"*
+* 📦 **Catalog Clutter:** *"What do reviews say about search filters and duplicate listings?"*
+* 🚀 **Roadmap Interventions:** *"What is the projected GMV impact of the 'Complete the Look' MVP?"*
+* 💬 **Verbatim Search:** *"Show me authentic customer quotes about blazer styling or shoe sizing."*"""
+
     def generate_response(self, user_query: str) -> str:
-        """Answers user question backed by retrieved reviews and AI synthesis."""
+        """Answers user question backed by retrieved reviews and AI synthesis with domain guardrails."""
+        if not user_query or not user_query.strip():
+            return "Please enter a question regarding fashion wishlist friction or customer feedback findings."
+
+        # Guardrail: Check domain relevance
+        if not self.is_query_relevant(user_query):
+            return self.generate_out_of_scope_response(user_query)
+
         evidence_reviews = self.search_relevant_feedback(user_query, limit=6)
         metrics = self.get_summary_metrics()
 
@@ -124,6 +198,9 @@ Key Verified Findings:
 - Catalog Clutter (16.2%): Duplicate listings, stock photo lighting mismatch.
 - Occasion Disconnect (16.2%): Impulsive saves with no immediate wear occasion.
 - Zero-Monetary Purge: 2,250 pure price/coupon records were purged to focus strictly on UX/product blockers.
+
+CRITICAL SCOPE RULE:
+If the user asks an irrelevant question that is NOT related to fashion e-commerce, wishlist dynamics, sizing/styling friction, customer reviews, or growth product strategy (for example: questions about sports celebrities, general trivia, programming, unrelated news), DO NOT fabricate or force a fashion answer. Explicitly state that the topic is outside the scope of the Myntra Wishlist Intelligence Engine.
 
 Retrieved Customer Evidence for this query:
 {evidence_str}

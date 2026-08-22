@@ -14,8 +14,8 @@ ENV/
 .coverage
 htmlcov/
 
-# Streamlit
-.streamlit/
+# Streamlit Secrets
+.streamlit/secrets.toml
 
 # OS Specific
 .DS_Store

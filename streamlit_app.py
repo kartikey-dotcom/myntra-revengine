@@ -55,8 +55,8 @@ if "active_nav" not in st.session_state:
 # -----------------------------------------------------------------------------
 # TOP NAVIGATION BAR (CLICKABLE & INTERACTIVE)
 # -----------------------------------------------------------------------------
-nav_col1, nav_col2, nav_col3, nav_col4, nav_col5, nav_col6, nav_col7 = st.columns(
-    [3.2, 1.4, 1.2, 1.3, 1.3, 0.6, 0.6]
+nav_col1, nav_col2, nav_col3, nav_col4, nav_col5, nav_col6, nav_col7, nav_col8 = st.columns(
+    [2.6, 1.2, 1.0, 1.1, 1.1, 1.6, 0.5, 0.5]
 )
 
 with nav_col1:
@@ -103,13 +103,23 @@ with nav_col5:
         st.rerun()
 
 with nav_col6:
+    if st.button(
+        "Strategic Q&A",
+        key="nav_qa",
+        use_container_width=True,
+        type="primary" if st.session_state.active_nav == "Strategic Q&A" else "secondary",
+    ):
+        st.session_state.active_nav = "Strategic Q&A"
+        st.rerun()
+
+with nav_col7:
     with st.popover("🔔", use_container_width=True):
         st.markdown("### 🔔 System Alerts")
-        st.info("⚠️ **Friction Alert:** Styling Isolation represents 39.1% of total wishlist drop-offs.")
+        st.info("⚠️ **Friction Alert:** Styling Isolation represents 38.2% of total wishlist drop-offs.")
         st.success("✅ **QA Audit Passed:** 100.0% Zero-Monetary Purity verified.")
         st.caption("Data Lake last refreshed: Just now")
 
-with nav_col7:
+with nav_col8:
     with st.popover("👤", use_container_width=True):
         st.markdown("### 👤 User Profile")
         st.markdown("**Kartikey**")
@@ -366,96 +376,6 @@ if st.session_state.active_nav == "Customer":
                 """
             )
 
-    # -------------------------------------------------------------------------
-    # ASK THE ENGINE: STRATEGIC PRODUCT Q&A MODULE
-    # -------------------------------------------------------------------------
-    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div class="chart-card" style="margin-bottom: 1.25rem;">
-            <div style="font-size: 1.25rem; font-weight: 700; color: #0F172A; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                🤖 Ask the Engine: Strategic Product Q&A
-            </div>
-            <div style="font-size: 0.9rem; color: #64748B;">
-                Synthesized AI intelligence answering key Growth & UX questions from 7,634 analyzed hesitation signals.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    qa_dataset = [
-        {
-            "q": "Why do high-intent shoppers add fashion products to a wishlist rather than direct to bag?",
-            "tag": "User Intent & Motivation",
-            "badge_color": "#ECFDF5",
-            "text_color": "#059669",
-            "answer": "Wishlisting is an active **aspirational mood-boarding and risk-mitigation buffer**. Shoppers save anchor items to mentally simulate complete outfits and verify wardrobe compatibility before committing financially.",
-            "evidence": "62.4% of wishlisted items are viewed >3 times without a cart transition.",
-            "quote": "I saved this olive pleated skirt to my wishlist because I love the silhouette, but I'm keeping it there until I figure out if I already own a top that matches.",
-        },
-        {
-            "q": "What specifically prevents wishlisted products from eventually converting to checkout?",
-            "tag": "Styling Isolation (39.1%)",
-            "badge_color": "#FFF1F2",
-            "text_color": "#E11D48",
-            "answer": "**Styling Isolation (39.1%)** is the primary blocker. Standalone catalog photos fail to show paired separates or accessories, forcing the cognitive burden of outfit creation onto the shopper and triggering fears of buying 'closet orphans'.",
-            "evidence": "39.1% volume share across organic Reddit and YouTube haul discussions.",
-            "quote": "Love the rust jacket on the model, but I don't own those specific wide-leg jeans she's wearing. Wish Myntra sold it as a whole set so I don't have to hunt.",
-        },
-        {
-            "q": "How do shoppers currently attempt to resolve styling and fit uncertainty off-platform?",
-            "tag": "Off-Platform Leakage",
-            "badge_color": "#FFF7ED",
-            "text_color": "#EA580C",
-            "answer": "Shoppers leak off-platform through three primary loops: **Pinterest/Google Images** for outfit pairings, **YouTube Try-On Hauls** for fabric movement, and **WhatsApp screenshots** for friend validation.",
-            "evidence": "43.7% of analyzed forum threads explicitly referenced off-platform searches or WhatsApp sharing.",
-            "quote": "I literally have 5 screenshots of this Mango top sent to my best friend on WhatsApp asking what trousers to wear with it.",
-        },
-        {
-            "q": "What is the emotional state of a user abandoning a wishlist item due to fit/styling ambiguity?",
-            "tag": "Psychological Barrier",
-            "badge_color": "#F1F5F9",
-            "text_color": "#475569",
-            "answer": "Shoppers transition from **Aspirational Excitement → Cognitive Overwhelm → Anticipatory Buyer's Remorse**, driven by the dread of tedious return pickups and wasted spend.",
-            "evidence": "88.3% of hesitation records expressed fear of return logistics or 'closet deadstock'.",
-            "quote": "I bought the trousers but returned them immediately because I couldn't find a matching top on the app easily and felt frustrated.",
-        },
-        {
-            "q": "What is the recommended non-monetary product intervention for the Growth Roadmap?",
-            "tag": "Strategic Recommendation",
-            "badge_color": "#EFF6FF",
-            "text_color": "#2563EB",
-            "answer": "Deploy a **'Complete the Look' AI Bundling MVP** with 3 curated outfit variations per wishlist SKU and 1-click bundle add-to-bag, driving conversion lift without margin-eroding discounts.",
-            "evidence": "+12% Wishlist Conversion Lift | +18% AOV Lift | ₹ 14.8 Cr Recoverable GMV.",
-            "quote": "Wish Myntra had an option to just buy the matching shoes and top shown on the model in one click.",
-        },
-    ]
-
-    for item in qa_dataset:
-        with st.expander(f"❓ **{item['q']}**", expanded=False):
-            st.markdown(
-                f"""
-                <div style="margin-bottom: 0.75rem;">
-                    <span style="background-color: {item['badge_color']}; color: {item['text_color']}; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem; border-radius: 9999px;">
-                        {item['tag']}
-                    </span>
-                </div>
-                <div style="font-size: 0.95rem; color: #1E293B; line-height: 1.55; margin-bottom: 0.75rem;">
-                    {item['answer']}
-                </div>
-                <div style="background: #F8FAFC; border-left: 3px solid #E11D48; padding: 0.75rem 1rem; border-radius: 6px; margin-top: 0.5rem;">
-                    <div style="font-size: 0.8rem; font-weight: 600; color: #059669; margin-bottom: 0.25rem;">
-                        📊 Data Benchmark: {item['evidence']}
-                    </div>
-                    <div style="font-size: 0.85rem; font-style: italic; color: #475569;">
-                        💬 Customer Proof: "{item['quote']}"
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
 # -----------------------------------------------------------------------------
 # TAB 2: PERFORMANCE VIEW
 # -----------------------------------------------------------------------------
@@ -658,6 +578,128 @@ elif st.session_state.active_nav == "Revenue":
             """,
             unsafe_allow_html=True,
         )
+
+# -----------------------------------------------------------------------------
+# TAB 5: STRATEGIC PM Q&A VIEW
+# -----------------------------------------------------------------------------
+elif st.session_state.active_nav == "Strategic Q&A":
+    st.markdown(
+        """
+        <div class="page-title">🤖 Ask the Engine: Strategic Product Q&A</div>
+        <div class="page-subtitle">Synthesized AI intelligence answering key Growth, Sizing & Styling questions from 29,067 customer hesitation signals</div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Top summary metrics for Q&A
+    q_col1, q_col2, q_col3 = st.columns(3)
+    with q_col1:
+        st.markdown(
+            """
+            <div class="kpi-card">
+                <div class="kpi-title">Primary Purchase Blocker</div>
+                <div class="kpi-value critical">Styling Isolation</div>
+                <div class="badge badge-critical">38.2% Share</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with q_col2:
+        st.markdown(
+            """
+            <div class="kpi-card">
+                <div class="kpi-title">Off-Platform Leakage Rate</div>
+                <div class="kpi-value">43.7%</div>
+                <div class="badge badge-filtered">WhatsApp / Pinterest</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with q_col3:
+        st.markdown(
+            """
+            <div class="kpi-card">
+                <div class="kpi-title">Recommended Feature ROI</div>
+                <div class="kpi-value">+12% CVR</div>
+                <div class="badge badge-baseline">+18% AOV Lift</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
+
+    qa_dataset = [
+        {
+            "q": "Why do high-intent shoppers add fashion products to a wishlist rather than direct to bag?",
+            "tag": "User Intent & Motivation",
+            "badge_color": "#ECFDF5",
+            "text_color": "#059669",
+            "answer": "Wishlisting is an active **aspirational mood-boarding and risk-mitigation buffer**. Shoppers save anchor items to mentally simulate complete outfits and verify wardrobe compatibility before committing financially.",
+            "evidence": "62.4% of wishlisted items are viewed >3 times without a cart transition.",
+            "quote": "I saved this olive pleated skirt to my wishlist because I love the silhouette, but I'm keeping it there until I figure out if I already own a top that matches.",
+        },
+        {
+            "q": "What specifically prevents wishlisted products from eventually converting to checkout?",
+            "tag": "Styling Isolation (38.2%)",
+            "badge_color": "#FFF1F2",
+            "text_color": "#E11D48",
+            "answer": "**Styling Isolation (38.2%)** is the primary blocker. Standalone catalog photos fail to show paired separates or accessories, forcing the cognitive burden of outfit creation onto the shopper and triggering fears of buying 'closet orphans'.",
+            "evidence": "11,092 records across organic Reddit and YouTube haul discussions.",
+            "quote": "Love the rust jacket on the model, but I don't own those specific wide-leg jeans she's wearing. Wish Myntra sold it as a whole set so I don't have to hunt.",
+        },
+        {
+            "q": "How do shoppers currently attempt to resolve styling and fit uncertainty off-platform?",
+            "tag": "Off-Platform Leakage",
+            "badge_color": "#FFF7ED",
+            "text_color": "#EA580C",
+            "answer": "Shoppers leak off-platform through three primary loops: **Pinterest/Google Images** for outfit pairings, **YouTube Try-On Hauls** for fabric movement, and **WhatsApp screenshots** for friend validation.",
+            "evidence": "43.7% of analyzed forum threads explicitly referenced off-platform searches or WhatsApp sharing.",
+            "quote": "I literally have 5 screenshots of this Mango top sent to my best friend on WhatsApp asking what trousers to wear with it.",
+        },
+        {
+            "q": "What is the emotional state of a user abandoning a wishlist item due to fit/styling ambiguity?",
+            "tag": "Psychological Barrier",
+            "badge_color": "#F1F5F9",
+            "text_color": "#475569",
+            "answer": "Shoppers transition from **Aspirational Excitement → Cognitive Overwhelm → Anticipatory Buyer's Remorse**, driven by the dread of tedious return pickups and wasted spend.",
+            "evidence": "88.3% of hesitation records expressed fear of return logistics or 'closet deadstock'.",
+            "quote": "I bought the trousers but returned them immediately because I couldn't find a matching top on the app easily and felt frustrated.",
+        },
+        {
+            "q": "What is the recommended non-monetary product intervention for the Growth Roadmap?",
+            "tag": "Strategic Recommendation",
+            "badge_color": "#EFF6FF",
+            "text_color": "#2563EB",
+            "answer": "Deploy a **'Complete the Look' AI Bundling MVP** with 3 curated outfit variations per wishlist SKU and 1-click bundle add-to-bag, driving conversion lift without margin-eroding discounts.",
+            "evidence": "+12% Wishlist Conversion Lift | +18% AOV Lift | ₹ 14.8 Cr Recoverable GMV.",
+            "quote": "Wish Myntra had an option to just buy the matching shoes and top shown on the model in one click.",
+        },
+    ]
+
+    for item in qa_dataset:
+        with st.expander(f"❓ **{item['q']}**", expanded=True):
+            st.markdown(
+                f"""
+                <div style="margin-bottom: 0.75rem;">
+                    <span style="background-color: {item['badge_color']}; color: {item['text_color']}; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem; border-radius: 9999px;">
+                        {item['tag']}
+                    </span>
+                </div>
+                <div style="font-size: 0.95rem; color: #1E293B; line-height: 1.55; margin-bottom: 0.75rem;">
+                    {item['answer']}
+                </div>
+                <div style="background: #F8FAFC; border-left: 3px solid #E11D48; padding: 0.75rem 1rem; border-radius: 6px; margin-top: 0.5rem;">
+                    <div style="font-size: 0.8rem; font-weight: 600; color: #059669; margin-bottom: 0.25rem;">
+                        📊 Data Benchmark: {item['evidence']}
+                    </div>
+                    <div style="font-size: 0.85rem; font-style: italic; color: #475569;">
+                        💬 Customer Proof: "{item['quote']}"
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
 # Footer
 st.markdown(FOOTER_HTML, unsafe_allow_html=True)

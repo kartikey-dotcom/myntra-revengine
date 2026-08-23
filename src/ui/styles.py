@@ -10,11 +10,17 @@ html, body, [class*="css"] {
     color: #1E293B;
 }
 
-/* Hide Streamlit default header/footer padding */
+/* Adjust Streamlit default header/footer padding so navbar is 100% visible */
 .block-container {
-    padding-top: 1rem !important;
-    padding-bottom: 2rem !important;
+    padding-top: 4.5rem !important;
+    padding-bottom: 3rem !important;
     max-width: 1200px !important;
+}
+
+header[data-testid="stHeader"] {
+    background: transparent !important;
+    height: 3rem !important;
+    z-index: 1 !important;
 }
 
 /* Streamlit default branding */

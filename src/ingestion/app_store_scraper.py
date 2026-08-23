@@ -39,23 +39,23 @@ class AppStoreScraper:
         try:
             from google_play_scraper import Sort, reviews
             
-            # Fetch real reviews from Google Play Store for Myntra
-            # Using mixed score filters (2, 3, 4 stars) to capture nuanced UX friction
+            # Fetch real reviews from Google Play Store for Myntra across newest & most relevant
             scores_to_fetch = [2, 3, 4]
-            count_per_score = max(target_count // len(scores_to_fetch) + 10, 50)
+            sort_modes = [Sort.MOST_RELEVANT, Sort.NEWEST]
 
-            for score in scores_to_fetch:
-                if len(records) >= target_count:
-                    break
+            for sort_mode in sort_modes:
+                for score in scores_to_fetch:
+                    if len(records) >= target_count:
+                        break
 
-                result, _ = reviews(
-                    "com.myntra.android",
-                    lang="en",
-                    country="in",
-                    sort=Sort.NEWEST,
-                    count=count_per_score,
-                    filter_score_with=score,
-                )
+                    result, _ = reviews(
+                        "com.myntra.android",
+                        lang="en",
+                        country="in",
+                        sort=sort_mode,
+                        count=60,
+                        filter_score_with=score,
+                    )
 
                 for rev in result:
                     if len(records) >= target_count:

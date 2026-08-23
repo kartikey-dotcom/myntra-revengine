@@ -35,6 +35,17 @@ class DatabaseManager:
             conn.executescript(schema_sql)
             conn.commit()
 
+    def reset_db(self) -> None:
+        """Drops and re-creates all tables from schema.sql."""
+        with self.get_connection() as conn:
+            conn.execute("DROP TABLE IF EXISTS classified_feedback;")
+            conn.execute("DROP TABLE IF EXISTS relevance_exclusion_log;")
+            conn.execute("DROP TABLE IF EXISTS monetary_purge_log;")
+            conn.execute("DROP TABLE IF EXISTS raw_feedback;")
+            conn.execute("DROP TABLE IF EXISTS ingestion_batches;")
+            conn.commit()
+        self.init_db()
+
     def create_batch(self, batch_id: str, source_channel: str) -> None:
         """Records a new ingestion batch."""
         with self.get_connection() as conn:
@@ -114,8 +125,8 @@ class DatabaseManager:
                     cursor.execute(
                         """
                         INSERT OR REPLACE INTO classified_feedback
-                        (id, raw_feedback_id, source_channel, timestamp, clean_text, primary_category, confidence_score, verbatim_quote, decision_barrier_summary, secondary_category, classification_batch_id)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        (id, raw_feedback_id, source_channel, timestamp, clean_text, source_url, primary_category, confidence_score, verbatim_quote, decision_barrier_summary, user_intent, detected_off_platform_action, secondary_category, classification_batch_id)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """,
                         (
                             record_id,
@@ -123,10 +134,13 @@ class DatabaseManager:
                             r["source_channel"],
                             r["timestamp"],
                             r["clean_text"],
+                            r.get("source_url", ""),
                             r["primary_category"],
                             r["confidence_score"],
                             r["verbatim_quote"],
                             r["decision_barrier_summary"],
+                            r.get("user_intent"),
+                            r.get("detected_off_platform_action"),
                             r.get("secondary_category"),
                             batch_id,
                         ),
@@ -137,6 +151,40 @@ class DatabaseManager:
                     print(f"Error inserting classified record: {e}")
             conn.commit()
         return inserted
+
+    def insert_relevance_exclusions(self, excluded_records: List[Dict[str, Any]], batch_id: str) -> int:
+        """Logs records excluded by the Relevance Filter."""
+        if not excluded_records:
+            return 0
+
+        logged = 0
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            for r in excluded_records:
+                log_id = f"excl_{uuid.uuid4().hex[:12]}"
+                try:
+                    cursor.execute(
+                        """
+                        INSERT OR REPLACE INTO relevance_exclusion_log
+                        (id, raw_feedback_id, source_channel, raw_text, source_url, exclusion_reason, classification_batch_id)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            log_id,
+                            r["record_id"],
+                            r["source_channel"],
+                            r["clean_text"],
+                            r.get("source_url", ""),
+                            r.get("relevance_reason", "Irrelevant to Wishlist / Purchase Decision"),
+                            batch_id,
+                        ),
+                    )
+                    if cursor.rowcount > 0:
+                        logged += 1
+                except Exception as e:
+                    print(f"Error logging excluded record: {e}")
+            conn.commit()
+        return logged
 
     def insert_monetary_purge_logs(self, purged_records: List[Dict[str, Any]], batch_id: str) -> int:
         """Logs dropped monetary records to monetary_purge_log."""
@@ -152,15 +200,16 @@ class DatabaseManager:
                     cursor.execute(
                         """
                         INSERT OR REPLACE INTO monetary_purge_log
-                        (id, raw_feedback_id, source_channel, raw_text, purge_reason, classification_batch_id)
-                        VALUES (?, ?, ?, ?, ?, ?)
+                        (id, raw_feedback_id, source_channel, raw_text, source_url, purge_reason, classification_batch_id)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
                         """,
                         (
                             log_id,
                             r["record_id"],
                             r["source_channel"],
                             r["clean_text"],
-                            r.get("purge_reason", "Zero-Monetary Rule Policy"),
+                            r.get("source_url", ""),
+                            r.get("relevance_reason") or r.get("decision_barrier_summary", "Zero-Monetary Rule Policy"),
                             batch_id,
                         ),
                     )
@@ -183,7 +232,7 @@ class DatabaseManager:
             return [dict(row) for row in rows]
 
     def get_classification_metrics(self) -> Dict[str, Any]:
-        """Returns aggregated breakdown of classified categories and purge counts."""
+        """Returns aggregated breakdown of classified categories, exclusions, and purge counts."""
         with self.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT primary_category, COUNT(*) as count FROM classified_feedback GROUP BY primary_category")
@@ -196,6 +245,9 @@ class DatabaseManager:
             cursor.execute("SELECT COUNT(*) as total_purged FROM monetary_purge_log")
             total_purged = cursor.fetchone()["total_purged"]
 
+            cursor.execute("SELECT COUNT(*) as total_excluded FROM relevance_exclusion_log")
+            total_excluded = cursor.fetchone()["total_excluded"]
+
             cursor.execute("SELECT source_channel, COUNT(*) as count FROM classified_feedback GROUP BY source_channel")
             ch_rows = cursor.fetchall()
             channels = {row["source_channel"]: row["count"] for row in ch_rows}
@@ -205,6 +257,7 @@ class DatabaseManager:
                 "channels": channels,
                 "total_classified": total_cls,
                 "total_purged": total_purged,
+                "total_excluded": total_excluded,
             }
 
     def get_record_counts_by_channel(self) -> Dict[str, int]:

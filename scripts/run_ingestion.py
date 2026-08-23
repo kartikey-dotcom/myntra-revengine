@@ -33,16 +33,9 @@ def run_pipeline(reset: bool = False):
 
     db = DatabaseManager()
     if reset:
-        print("[*] Reset flag passed: Re-initializing fresh database schema...")
-        db.init_db()
-        with db.get_connection() as conn:
-            c = conn.cursor()
-            c.execute("DELETE FROM raw_feedback;")
-            c.execute("DELETE FROM classified_feedback;")
-            c.execute("DELETE FROM monetary_purge_log;")
-            c.execute("DELETE FROM ingestion_batches;")
-            conn.commit()
-        print("   [+] Previous database tables cleared.\n")
+        print("[*] Reset flag passed: Dropping and re-creating fresh database schema...")
+        db.reset_db()
+        print("   [+] Fresh schema initialized.\n")
 
     batch_id = f"batch_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}"
     print(f"[*] Initialized Ingestion Batch ID: {batch_id}\n")

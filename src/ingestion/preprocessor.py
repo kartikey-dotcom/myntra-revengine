@@ -61,6 +61,10 @@ class Preprocessor:
         if len(clean) < 10:
             return None
 
+        # Enforce real traceability: thread_url must be a valid http(s) URL
+        if not thread_url or not (thread_url.startswith("http://") or thread_url.startswith("https://")):
+            return None
+
         author_hash = self.anonymize_author(author)
         record_id = self.generate_record_id(source_channel, author_hash, clean)
 

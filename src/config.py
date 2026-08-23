@@ -21,11 +21,11 @@ PROCESSED_DATA_DIR.mkdir(exist_ok=True)
 SQLITE_DB_PATH = DATA_DIR / "myntra_wishlist_lake.db"
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{SQLITE_DB_PATH}")
 
-# Target Ingestion Volumes (Targeting ~15,200 high-quality evidence records across all platforms)
+# Target Ingestion Volumes (Targeting 150–400 high-quality, fully-traceable evidence records across all platforms)
 TARGET_RECORDS = {
-    "reddit": 6200,
-    "youtube": 4500,
-    "app_store": 4500,
+    "reddit": 100,
+    "youtube": 100,
+    "app_store": 150,
 }
 
 # Target Keywords for Ingestion

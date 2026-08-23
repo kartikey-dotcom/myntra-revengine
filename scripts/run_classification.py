@@ -38,6 +38,13 @@ def run_batch_classification():
         print("[!] No raw records found in Data Lake. Please run `python scripts/run_ingestion.py` first.")
         return
 
+    # Clear previous classification records for fresh clean state
+    with db.get_connection() as conn:
+        c = conn.cursor()
+        c.execute("DELETE FROM classified_feedback;")
+        c.execute("DELETE FROM monetary_purge_log;")
+        conn.commit()
+
     # Process in batches
     batch_size = 500
     valid_classified = []

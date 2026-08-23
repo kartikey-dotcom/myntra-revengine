@@ -81,11 +81,16 @@ class LLMCognitiveClassifier:
         # Extract genuine verbatim quote from the text
         quote = self._extract_best_quote(text, best_cat)
         summary = self._generate_summary(best_cat, quote)
-        confidence = min(0.99, max(0.85, 0.85 + (top_score * 0.03)))
+        
+        # Calculate continuous, nuanced confidence score
+        total_tokens = len(lower.split())
+        density = (top_score / max(total_tokens, 1)) * 8
+        quote_factor = min(len(quote), 100) / 100 * 0.08
+        confidence = min(0.98, max(0.71, 0.72 + (min(density, 1.0) * 0.18) + quote_factor))
 
         return ClassificationResult(
             primary_category=best_cat,
-            confidence_score=round(confidence, 2),
+            confidence_score=round(confidence, 3),
             verbatim_quote=quote,
             decision_barrier_summary=summary,
             secondary_category=None,

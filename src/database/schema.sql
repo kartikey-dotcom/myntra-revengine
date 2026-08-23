@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS raw_feedback (
     timestamp TIMESTAMP NOT NULL,
     raw_text TEXT NOT NULL,
     clean_text TEXT NOT NULL,
-    thread_url TEXT,
+    thread_url TEXT NOT NULL,
     raw_metadata JSON,
     ingestion_batch_id VARCHAR(64) REFERENCES ingestion_batches(batch_id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -291,8 +291,7 @@ if st.session_state.active_nav == "Customer":
         st.markdown(
             """
             <div style="font-size: 0.84rem; color: #64748B; padding-top: 0.35rem;">
-                📂 <strong>Full Research Lake (29,067 records):</strong> Classified across 5 cognitive pillars.
-                <a href="https://github.com/kartikey-dotcom/myntra-revengine/blob/main/data/myntra_categorized_wishlist_feedback.xlsx" target="_blank" style="color: #E11D48; font-weight: 600; text-decoration: underline; margin-left: 0.5rem;">Access Excel on GitHub ↗</a>
+                📂 <strong>Full Research Dataset (29,067 records):</strong> Contains classified verbatim evidence, confidence scores, and barrier summaries.
             </div>
             """,
             unsafe_allow_html=True,
@@ -519,8 +518,7 @@ elif st.session_state.active_nav == "Traffic":
         st.markdown(
             """
             <div style="font-size: 0.84rem; color: #64748B; padding-top: 0.35rem;">
-                📦 <strong>Raw Data Lake Access:</strong> Access all 29,067 records and SQLite schema.
-                <a href="https://github.com/kartikey-dotcom/myntra-revengine/tree/main/data" target="_blank" style="color: #E11D48; font-weight: 600; text-decoration: underline; margin-left: 0.5rem;">Explore Data Lake on GitHub ↗</a>
+                📦 <strong>Audited Pipeline Data:</strong> Multi-channel records across Reddit (PRAW), YouTube (API v3), and App Store.
             </div>
             """,
             unsafe_allow_html=True,

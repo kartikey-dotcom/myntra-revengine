@@ -38,21 +38,21 @@ div[data-testid="stChatInput"], div[data-testid="stBottom"], .stChatInput {
 }
 
 .nav-brand {
-    font-size: 1.45rem;
-    font-weight: 800;
-    color: #E11D48;
-    text-decoration: none;
-    letter-spacing: -0.03em;
-    display: flex;
-    align-items: center;
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+    color: #E11D48 !important;
+    letter-spacing: -0.03em !important;
+    display: flex !important;
+    align-items: center !important;
+    padding-top: 0.25rem !important;
 }
 
 /* Tab buttons styling */
-div[data-testid="stHorizontalBlock"] .stButton > button {
+div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button {
     background-color: transparent !important;
-    color: #64748B !important;
+    color: #334155 !important;
     font-size: 0.95rem !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0.4rem 0.8rem !important;
@@ -60,18 +60,36 @@ div[data-testid="stHorizontalBlock"] .stButton > button {
     border-bottom: 2px solid transparent !important;
 }
 
-div[data-testid="stHorizontalBlock"] .stButton > button:hover {
+div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button p,
+div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button span {
+    color: #334155 !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+}
+
+div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button:hover {
     color: #E11D48 !important;
     background-color: #FFF1F2 !important;
     border-radius: 6px !important;
 }
 
-div[data-testid="stHorizontalBlock"] .stButton > button[kind="primary"] {
+div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button:hover p,
+div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button:hover span {
+    color: #E11D48 !important;
+}
+
+div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button[kind="primary"] {
     color: #E11D48 !important;
     font-weight: 700 !important;
-    border-bottom: 2px solid #E11D48 !important;
-    background-color: transparent !important;
-    border-radius: 0px !important;
+    border-bottom: 3px solid #E11D48 !important;
+    background-color: #FFF1F2 !important;
+    border-radius: 6px !important;
+}
+
+div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button[kind="primary"] p,
+div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button[kind="primary"] span {
+    color: #E11D48 !important;
+    font-weight: 700 !important;
 }
 
 /* Page Header */

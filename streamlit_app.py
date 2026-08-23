@@ -50,7 +50,7 @@ st.set_page_config(
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=60)
 def load_dashboard_data():
     """Loads and caches processed feedback data from the data lake."""
     db = DatabaseManager()

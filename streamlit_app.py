@@ -274,6 +274,31 @@ if st.session_state.active_nav == "Customer":
                 unsafe_allow_html=True,
             )
 
+    st.markdown("<hr style='margin-top: 1rem; margin-bottom: 1rem; border-color: #F1F5F9;'>", unsafe_allow_html=True)
+    d_col1, d_col2 = st.columns([1.5, 2.5])
+    excel_file = BASE_DIR / "data" / "myntra_categorized_wishlist_feedback.xlsx"
+    with d_col1:
+        if excel_file.exists():
+            with open(excel_file, "rb") as f:
+                st.download_button(
+                    label="📊 Download 29,067 Feedback Dataset (.xlsx)",
+                    data=f.read(),
+                    file_name="myntra_categorized_wishlist_feedback.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True,
+                    key="dl_excel_cust",
+                )
+    with d_col2:
+        st.markdown(
+            """
+            <div style="font-size: 0.84rem; color: #64748B; padding-top: 0.35rem;">
+                📂 <strong>Full Research Lake (29,067 records):</strong> Classified across 5 cognitive pillars.
+                <a href="https://github.com/kartikey-dotcom/myntra-revengine/blob/main/data/myntra_categorized_wishlist_feedback.xlsx" target="_blank" style="color: #E11D48; font-weight: 600; text-decoration: underline; margin-left: 0.5rem;">Access Excel on GitHub ↗</a>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
     st.markdown("</div>", unsafe_allow_html=True)
 
     # STRATEGIC RECOMMENDATION & MVP PROPOSAL
@@ -476,6 +501,32 @@ elif st.session_state.active_nav == "Traffic":
     )
     trend_fig = build_traffic_trend_chart()
     st.plotly_chart(trend_fig, use_container_width=True, config={"displayModeBar": False})
+
+    st.markdown("<hr style='margin-top: 1rem; margin-bottom: 1rem; border-color: #F1F5F9;'>", unsafe_allow_html=True)
+    t_col1, t_col2 = st.columns([1.5, 2.5])
+    excel_file = BASE_DIR / "data" / "myntra_categorized_wishlist_feedback.xlsx"
+    with t_col1:
+        if excel_file.exists():
+            with open(excel_file, "rb") as f:
+                st.download_button(
+                    label="📊 Download Ingested Dataset (Excel)",
+                    data=f.read(),
+                    file_name="myntra_categorized_wishlist_feedback.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True,
+                    key="dl_excel_traffic",
+                )
+    with t_col2:
+        st.markdown(
+            """
+            <div style="font-size: 0.84rem; color: #64748B; padding-top: 0.35rem;">
+                📦 <strong>Raw Data Lake Access:</strong> Access all 29,067 records and SQLite schema.
+                <a href="https://github.com/kartikey-dotcom/myntra-revengine/tree/main/data" target="_blank" style="color: #E11D48; font-weight: 600; text-decoration: underline; margin-left: 0.5rem;">Explore Data Lake on GitHub ↗</a>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
     st.markdown("</div>", unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------

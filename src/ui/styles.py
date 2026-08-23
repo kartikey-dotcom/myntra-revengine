@@ -312,9 +312,10 @@ FOOTER_HTML = """
 <div class="custom-footer">
     <div>© 2024 Myntra Internal Tools • Confidential Data</div>
     <div class="footer-links">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Support</a>
-        <a href="#">Documentation</a>
+        <a href="https://github.com/kartikey-dotcom/myntra-revengine/blob/main/data/myntra_categorized_wishlist_feedback.xlsx" target="_blank" style="color: #E11D48; font-weight: 600;">📊 Download 29,067 Reviews Dataset (.xlsx)</a>
+        <a href="https://github.com/kartikey-dotcom/myntra-revengine/blob/main/data/myntra_categorized_wishlist_feedback.csv" target="_blank">Raw CSV</a>
+        <a href="https://github.com/kartikey-dotcom/myntra-revengine" target="_blank">Documentation</a>
     </div>
 </div>
 """
+

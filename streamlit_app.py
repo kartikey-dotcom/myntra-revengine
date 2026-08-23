@@ -17,14 +17,25 @@ sys.path.insert(0, str(BASE_DIR))
 
 from src.database.db_manager import DatabaseManager
 from src.ui.styles import CUSTOM_CSS, FOOTER_HTML
-from src.ui.charts import (
-    build_donut_chart,
-    build_channel_stacked_bar,
-    build_performance_funnel,
-    build_traffic_trend_chart,
-    build_opportunity_prioritization_chart,
-    build_category_sensitivity_bar,
-)
+try:
+    from src.ui.charts import (
+        build_donut_chart,
+        build_channel_stacked_bar,
+        build_performance_funnel,
+        build_traffic_trend_chart,
+        build_opportunity_prioritization_chart,
+        build_category_sensitivity_bar,
+    )
+except ImportError:
+    from src.ui import (
+        build_donut_chart,
+        build_channel_stacked_bar,
+        build_performance_funnel,
+        build_traffic_trend_chart,
+        build_opportunity_prioritization_chart,
+        build_category_sensitivity_bar,
+    )
+
 from src.qa.engine_chat import StrategicQAChatbot
 
 # Page configuration

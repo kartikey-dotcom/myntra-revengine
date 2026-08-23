@@ -714,6 +714,7 @@ elif st.session_state.active_nav == "Strategic Q&A":
         st.session_state.messages.append({"role": "user", "content": prompt_text})
         response = st.session_state.qa_chatbot.generate_response(prompt_text)
         st.session_state.messages.append({"role": "assistant", "content": response})
+        st.rerun()
 
     # Header controls (Reset chat option)
     if len(st.session_state.messages) > 1:
@@ -733,47 +734,46 @@ elif st.session_state.active_nav == "Strategic Q&A":
                 ]
                 st.rerun()
 
-    # 1. Render Chat History FIRST (Main vertical body)
+    # 1. Render Chat History (Main vertical body)
     for message in st.session_state.messages:
         with st.chat_message(message["role"], avatar="🛍️" if message["role"] == "assistant" else "👤"):
             st.markdown(message["content"])
 
-    # 2. Quick Suggestion Chips (Only appear on fresh/initial chat)
-    if len(st.session_state.messages) <= 1:
-        st.markdown("<div style='font-size: 0.85rem; font-weight: 600; color: #64748B; margin-top: 1.25rem; margin-bottom: 0.5rem;'>💡 Suggested Topics to Explore (Click to ask):</div>", unsafe_allow_html=True)
-        chip_col1, chip_col2, chip_col3, chip_col4 = st.columns(4)
-        with chip_col1:
-            st.button(
-                "👗 Why Styling Isolation?",
-                key="chip_style",
-                use_container_width=True,
-                on_click=send_chip_prompt,
-                args=("Why is Styling Isolation the #1 reason users abandon their wishlists?",),
-            )
-        with chip_col2:
-            st.button(
-                "📏 Sizing Complaints?",
-                key="chip_fit",
-                use_container_width=True,
-                on_click=send_chip_prompt,
-                args=("What are the most frequent sizing and fit ambiguity complaints in the reviews?",),
-            )
-        with chip_col3:
-            st.button(
-                "📱 WhatsApp / Pinterest Leakage?",
-                key="chip_off",
-                use_container_width=True,
-                on_click=send_chip_prompt,
-                args=("How do users try to solve fashion hesitation off-platform on WhatsApp and Pinterest?",),
-            )
-        with chip_col4:
-            st.button(
-                "🚀 Complete the Look ROI?",
-                key="chip_roi",
-                use_container_width=True,
-                on_click=send_chip_prompt,
-                args=("What is the expected ROI and GMV recovery of the 'Complete the Look' MVP?",),
-            )
+    # 2. Quick Suggestion Chips (Always visible & clickable)
+    st.markdown("<div style='font-size: 0.85rem; font-weight: 600; color: #64748B; margin-top: 1.25rem; margin-bottom: 0.5rem;'>💡 Clickable Topics to Explore:</div>", unsafe_allow_html=True)
+    chip_col1, chip_col2, chip_col3, chip_col4 = st.columns(4)
+    with chip_col1:
+        st.button(
+            "👗 Why Styling Isolation?",
+            key="chip_style",
+            use_container_width=True,
+            on_click=send_chip_prompt,
+            args=("Why is Styling Isolation the #1 reason users abandon their wishlists?",),
+        )
+    with chip_col2:
+        st.button(
+            "📏 Sizing Complaints?",
+            key="chip_fit",
+            use_container_width=True,
+            on_click=send_chip_prompt,
+            args=("What are the most frequent sizing and fit ambiguity complaints in the reviews?",),
+        )
+    with chip_col3:
+        st.button(
+            "📱 WhatsApp / Pinterest Leakage?",
+            key="chip_off",
+            use_container_width=True,
+            on_click=send_chip_prompt,
+            args=("How do users try to solve fashion hesitation off-platform on WhatsApp and Pinterest?",),
+        )
+    with chip_col4:
+        st.button(
+            "🚀 Complete the Look ROI?",
+            key="chip_roi",
+            use_container_width=True,
+            on_click=send_chip_prompt,
+            args=("What is the expected ROI and GMV recovery of the 'Complete the Look' MVP?",),
+        )
 
     # 3. Prominent In-Page Search Box Card (Always directly visible on screen)
     st.markdown(

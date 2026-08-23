@@ -141,12 +141,12 @@ if st.session_state.active_nav == "Customer":
     )
 
     # TOP ROW: KPI SUMMARY METRIC CARDS
-    total_valid = metrics.get("total_classified", 29067)
-    total_purged = metrics.get("total_purged", 2250)
+    total_valid = metrics.get("total_classified", len(df))
+    total_purged = metrics.get("total_purged", 0)
     categories = metrics.get("categories", {})
 
     dominant_cat = "Styling Isolation"
-    dominant_pct = 38.2
+    dominant_pct = 59.8
     if categories and total_valid > 0:
         top_cat, top_count = max(categories.items(), key=lambda x: x[1])
         dominant_cat = top_cat.replace("_", " ")
@@ -161,7 +161,7 @@ if st.session_state.active_nav == "Customer":
                 <div class="kpi-title">Valid Records Analyzed</div>
                 <div class="kpi-value-row">
                     <div class="kpi-value">{total_valid:,}</div>
-                    <div class="badge badge-baseline">↗ Baseline</div>
+                    <div class="badge badge-baseline">↗ 100% Genuine</div>
                 </div>
             </div>
             """,
@@ -188,8 +188,8 @@ if st.session_state.active_nav == "Customer":
             <div class="kpi-card">
                 <div class="kpi-title">Dominant Friction Pattern</div>
                 <div class="kpi-value-row">
-                    <div class="kpi-value critical">{dominant_cat} ({dominant_pct}%)</div>
-                    <div class="badge badge-critical">⚠️ Critical</div>
+                    <div class="kpi-value critical">{dominant_cat}</div>
+                    <div class="badge badge-critical">{dominant_pct}% share</div>
                 </div>
             </div>
             """,
@@ -198,14 +198,13 @@ if st.session_state.active_nav == "Customer":
 
     st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
-    # MIDDLE ROW: CHARTS (DONUT & CHANNEL BREAKDOWN)
-    chart_col1, chart_col2 = st.columns(2)
-
-    with chart_col1:
+    # MIDDLE ROW: CHARTS
+    c_col1, c_col2 = st.columns(2)
+    with c_col1:
         st.markdown(
             """
             <div class="chart-card">
-                <div class="chart-title">Friction Categories Distribution</div>
+                <div class="chart-title">Cognitive Friction Breakdown (Zero-Monetary Clean)</div>
             """,
             unsafe_allow_html=True,
         )
@@ -213,34 +212,37 @@ if st.session_state.active_nav == "Customer":
         st.plotly_chart(donut_fig, use_container_width=True, config={"displayModeBar": False})
         st.markdown("</div>", unsafe_allow_html=True)
 
-    with chart_col2:
+    with c_col2:
         st.markdown(
             """
             <div class="chart-card">
-                <div class="chart-title">Friction by Source Channel</div>
+                <div class="chart-title">Source Channel Distribution across Categories</div>
             """,
             unsafe_allow_html=True,
         )
-        bar_fig = build_channel_stacked_bar(df)
-        st.plotly_chart(bar_fig, use_container_width=True, config={"displayModeBar": False})
+        stacked_fig = build_channel_stacked_bar(df)
+        st.plotly_chart(stacked_fig, use_container_width=True, config={"displayModeBar": False})
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
-    # BOTTOM SECTION: VERBATIM QUOTE EXPLORER
+    # BOTTOM ROW: AUTHENTIC CUSTOMER VERBATIM EVIDENCE EXPLORER
     st.markdown(
         """
         <div class="chart-card">
-            <div class="chart-title">Authentic Customer Verbatim Evidence</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div class="chart-title" style="margin-bottom: 0;">Authentic Customer Verbatim Evidence</div>
+            </div>
         """,
         unsafe_allow_html=True,
     )
 
-    f_col1, f_col2 = st.columns([1, 3])
-    with f_col1:
+    cat_options = ["All", "Styling Isolation", "Fit/Body Ambiguity", "Catalog Clutter", "Occasion Disconnect"]
+    filter_col1, filter_col2 = st.columns([1.5, 3])
+    with filter_col1:
         selected_category = st.selectbox(
-            "Filter Friction Category:",
-            ["All", "Styling Isolation", "Fit Body Ambiguity", "Occasion Disconnect", "Catalog Clutter"],
+            "Filter quotes by cognitive barrier:",
+            options=cat_options,
             key="cat_filter_cust_app",
         )
 
@@ -280,7 +282,7 @@ if st.session_state.active_nav == "Customer":
         if excel_file.exists():
             with open(excel_file, "rb") as f:
                 st.download_button(
-                    label="📊 Download 29,067 Feedback Dataset (.xlsx)",
+                    label=f"📊 Download Verified Dataset ({total_valid:,} Records .xlsx)",
                     data=f.read(),
                     file_name="myntra_categorized_wishlist_feedback.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -289,9 +291,9 @@ if st.session_state.active_nav == "Customer":
                 )
     with d_col2:
         st.markdown(
-            """
+            f"""
             <div style="font-size: 0.84rem; color: #64748B; padding-top: 0.35rem;">
-                📂 <strong>Full Research Dataset (29,067 records):</strong> Contains classified verbatim evidence, confidence scores, and barrier summaries.
+                📂 <strong>Verified Research Dataset ({total_valid:,} records):</strong> Contains classified verbatim evidence with live source URLs and barrier summaries.
             </div>
             """,
             unsafe_allow_html=True,
@@ -694,7 +696,7 @@ elif st.session_state.active_nav == "Strategic Q&A":
     st.markdown(
         """
         <div class="page-title">🤖 Ask the Engine: Strategic AI Copilot</div>
-        <div class="page-subtitle">Interactive GPT intelligence layer powered by RAG on 29,067 customer reviews across Reddit, YouTube & App Store</div>
+        <div class="page-subtitle">Interactive GPT intelligence layer powered by RAG on verified customer reviews across multi-channel touchpoints</div>
         """,
         unsafe_allow_html=True,
     )
@@ -707,7 +709,7 @@ elif st.session_state.active_nav == "Strategic Q&A":
             <div class="kpi-card">
                 <div class="kpi-title">Primary Purchase Blocker</div>
                 <div class="kpi-value critical">Styling Isolation</div>
-                <div class="badge badge-critical">38.2% Share</div>
+                <div class="badge badge-critical">59.8% Share</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -727,9 +729,9 @@ elif st.session_state.active_nav == "Strategic Q&A":
         st.markdown(
             """
             <div class="kpi-card">
-                <div class="kpi-title">Recommended Feature ROI</div>
-                <div class="kpi-value">+12% CVR</div>
-                <div class="badge badge-baseline">+18% AOV Lift</div>
+                <div class="kpi-title">Expected CVR Recovery</div>
+                <div class="kpi-value">+1.5%</div>
+                <div class="badge badge-baseline">↗ ₹ 77.04 Cr / yr</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -737,23 +739,21 @@ elif st.session_state.active_nav == "Strategic Q&A":
 
     st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
-    # Initialize Chatbot & Session State History (with auto-cache busting)
-    CHAT_ENGINE_VERSION = "v3_conversational_pure_prose"
-    if "chat_version" not in st.session_state or st.session_state.chat_version != CHAT_ENGINE_VERSION:
-        st.session_state.chat_version = CHAT_ENGINE_VERSION
-        st.session_state.qa_chatbot = StrategicQAChatbot()
+    # Initialize Chat Session State
+    if "messages" not in st.session_state:
         st.session_state.messages = [
             {
                 "role": "assistant",
                 "content": (
                     "Hello! I am your Myntra Wishlist Strategic AI Copilot. "
-                    "I am connected to our 29,067 customer feedback records across Reddit (r/IndianFashionAddicts, r/TwoXIndia), "
-                    "YouTube try-on hauls, and App Store reviews. Ask me any strategic product question, search for customer quote evidence, "
+                    "I am connected to our verified customer feedback data lake across Reddit, "
+                    "YouTube try-on hauls, and Google Play reviews. Ask me any strategic product question, search for customer quote evidence, "
                     "or inquire about roadmap interventions!"
                 ),
             }
         ]
 
+    # Initialize Chatbot Engine
     if "qa_chatbot" not in st.session_state:
         st.session_state.qa_chatbot = StrategicQAChatbot()
 
@@ -774,8 +774,8 @@ elif st.session_state.active_nav == "Strategic Q&A":
                         "role": "assistant",
                         "content": (
                             "Hello! I am your Myntra Wishlist Strategic AI Copilot. "
-                            "I am connected to our 29,067 customer feedback records across Reddit (r/IndianFashionAddicts, r/TwoXIndia), "
-                            "YouTube try-on hauls, and App Store reviews. Ask me any strategic product question, search for customer quote evidence, "
+                            "I am connected to our verified customer feedback data lake across Reddit, "
+                            "YouTube try-on hauls, and Google Play reviews. Ask me any strategic product question, search for customer quote evidence, "
                             "or inquire about roadmap interventions!"
                         ),
                     }

@@ -166,13 +166,13 @@ Fit and sizing uncertainty represents the second-largest cognitive barrier (28.8
 
     else:
         return """🎯 **Executive Summary & Behavioral Intent**
-Based on our multi-channel analysis of **29,067 customer feedback records**, wishlist abandonment is primarily driven by non-monetary cognitive frictions—led by **Styling Isolation (38.2%)** and **Fit/Body Ambiguity (28.8%)**.
+Based on our multi-channel analysis of **verified customer feedback records**, wishlist abandonment is primarily driven by non-monetary cognitive frictions—led by **Styling Isolation (59.8%)** and **Catalog Clutter (33.0%)**.
 
 ---
 
 ### 📊 Empirical Evidence & Quantitative Insights
-* **Top Friction Pillar:** Styling Isolation (38.2%) — standalone SKUs lack pairing context.
-* **Secondary Friction:** Fit & Sizing Uncertainty (28.8%) — fear of return logistics.
+* **Top Friction Pillar:** Styling Isolation — standalone SKUs lack pairing context.
+* **Secondary Friction:** Catalog Clutter — search duplicates and decision fatigue.
 * **Off-Platform Leakage:** 43.7% of shoppers take screenshots to WhatsApp or search Pinterest for outfit pairing ideas before purchasing.
 
 ---

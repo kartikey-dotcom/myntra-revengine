@@ -651,12 +651,40 @@ elif st.session_state.active_nav == "Strategic Q&A":
                 args=("What is the expected ROI and GMV recovery of the 'Complete the Look' MVP?",),
             )
 
-    # 3. Native Pinned Chat Input (Bottom bar)
+    # 3. Prominent In-Page Search Box Card (Always directly visible on screen)
+    st.markdown(
+        """
+        <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 1rem 1.25rem 0.5rem 1.25rem; margin-top: 1.25rem; margin-bottom: 0.75rem; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+            <div style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔎</span> Ask the Intelligence Engine
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    with st.form("inpage_qa_search_form", clear_on_submit=True):
+        f_col1, f_col2 = st.columns([5, 1.2])
+        with f_col1:
+            inpage_input = st.text_input(
+                "Search Input",
+                placeholder="Ask me about customer hesitation patterns, styling isolation, or sizing...",
+                label_visibility="collapsed",
+            )
+        with f_col2:
+            inpage_submit = st.form_submit_button("Ask Copilot 🚀", use_container_width=True, type="primary")
+
+    # 4. Native Pinned Chat Input (Bottom bar)
     user_bottom_input = st.chat_input("Ask me about customer hesitation patterns...")
 
-    if user_bottom_input:
-        st.session_state.messages.append({"role": "user", "content": user_bottom_input})
-        ai_response = st.session_state.qa_chatbot.generate_response(user_bottom_input)
+    query_to_process = None
+    if inpage_submit and inpage_input and inpage_input.strip():
+        query_to_process = inpage_input.strip()
+    elif user_bottom_input and user_bottom_input.strip():
+        query_to_process = user_bottom_input.strip()
+
+    if query_to_process:
+        st.session_state.messages.append({"role": "user", "content": query_to_process})
+        ai_response = st.session_state.qa_chatbot.generate_response(query_to_process)
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
         st.rerun()
 

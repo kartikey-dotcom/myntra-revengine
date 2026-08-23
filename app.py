@@ -567,11 +567,11 @@ elif st.session_state.active_nav == "Strategic Q&A":
 
     st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
-    # Initialize Chatbot & Session State History
-    if "qa_chatbot" not in st.session_state:
+    # Initialize Chatbot & Session State History (with auto-cache busting)
+    CHAT_ENGINE_VERSION = "v3_conversational_pure_prose"
+    if "chat_version" not in st.session_state or st.session_state.chat_version != CHAT_ENGINE_VERSION:
+        st.session_state.chat_version = CHAT_ENGINE_VERSION
         st.session_state.qa_chatbot = StrategicQAChatbot()
-
-    if "messages" not in st.session_state:
         st.session_state.messages = [
             {
                 "role": "assistant",
@@ -583,6 +583,9 @@ elif st.session_state.active_nav == "Strategic Q&A":
                 ),
             }
         ]
+
+    if "qa_chatbot" not in st.session_state:
+        st.session_state.qa_chatbot = StrategicQAChatbot()
 
     # Callback for quick-suggestion chips
     def send_chip_prompt_app(prompt_text):

@@ -21,6 +21,8 @@ from src.ui.charts import (
     build_channel_stacked_bar,
     build_performance_funnel,
     build_traffic_trend_chart,
+    build_opportunity_prioritization_chart,
+    build_category_sensitivity_bar,
 )
 from src.qa.engine_chat import StrategicQAChatbot
 
@@ -470,22 +472,130 @@ elif st.session_state.active_nav == "Traffic":
 elif st.session_state.active_nav == "Revenue":
     st.markdown(
         """
-        <div class="page-title">💰 Opportunity Sizing: Simulated Revenue Recovery Calculator</div>
-        <div class="page-subtitle">Interactive financial sizing of Wishlist UX & styling intervention roadmaps</div>
+        <div class="page-title">💰 Opportunity Sizing & Cross-Intervention Comparison Matrix</div>
+        <div class="page-subtitle">Quantifying, prioritizing, and comparing potential non-monetary product interventions to maximize GMV recovery</div>
         """,
         unsafe_allow_html=True,
     )
 
-    r_col1, r_col2 = st.columns([1, 1.2])
+    # 1. TOP SECTION: CROSS-OPPORTUNITY COMPARATIVE PRIORITIZATION TABLE
+    st.markdown(
+        """
+        <div class="chart-card" style="margin-bottom: 1.5rem;">
+            <div class="chart-title">📊 Multi-Opportunity Sizing & Strategic Trade-off Matrix</div>
+            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1rem;">
+                Comparative evaluation of 4 non-monetary product interventions modeled against 2,000,000 monthly wishlist saves and ₹2,140 baseline AOV.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    with r_col1:
-        st.markdown("### 🎛️ Simulation Parameters")
-        monthly_wishlists = st.slider("Monthly Active Wishlist Saves", min_value=500000, max_value=5000000, value=2000000, step=100000, format="%d", key="w_slider_app")
-        current_cvr = st.slider("Current Wishlist Conversion Rate (%)", min_value=1.0, max_value=10.0, value=4.2, step=0.1, key="cvr_slider_app")
-        expected_lift = st.slider("Expected Lift from 'Complete the Look' MVP (%)", min_value=0.5, max_value=5.0, value=1.5, step=0.1, key="lift_slider_app")
-        aov = st.slider("Average Order Value (₹)", min_value=1000, max_value=5000, value=2140, step=50, key="aov_slider_app")
+    opp_data = [
+        {
+            "Priority": "🔥 P0 (Top Bet)",
+            "Opportunity Area": "Complete the Look AI Bundling",
+            "Target Friction": "Styling Isolation (38.2%)",
+            "Target Metric Lift": "+1.5% CVR (+18% AOV)",
+            "Annual GMV Recovery": "₹ 77.04 Cr / yr",
+            "Dev Effort": "8 Weeks (High)",
+            "Confidence": "90% (High)",
+        },
+        {
+            "Priority": "⚡ P1 (Fast Follow)",
+            "Opportunity Area": "TrueFit Real-User Sizing Overlay",
+            "Target Friction": "Fit/Body Ambiguity (28.8%)",
+            "Target Metric Lift": "+1.1% CVR (-22% Returns)",
+            "Annual GMV Recovery": "₹ 56.50 Cr / yr",
+            "Dev Effort": "5 Weeks (Med)",
+            "Confidence": "85% (High)",
+        },
+        {
+            "Priority": "📌 P2 (Quick Win)",
+            "Opportunity Area": "Smart Attribute Compare Mode",
+            "Target Friction": "Catalog Clutter (16.2%)",
+            "Target Metric Lift": "+0.6% CVR (-14% Drop-off)",
+            "Annual GMV Recovery": "₹ 30.82 Cr / yr",
+            "Dev Effort": "2.5 Weeks (Low)",
+            "Confidence": "80% (Med)",
+        },
+        {
+            "Priority": "💡 P3 (Growth Loop)",
+            "Opportunity Area": "WhatsApp Peer Validation Canvas",
+            "Target Friction": "Occasion / Off-Platform (16.8%)",
+            "Target Metric Lift": "+0.5% CVR (+78% Viral Share)",
+            "Annual GMV Recovery": "₹ 25.68 Cr / yr",
+            "Dev Effort": "2 Weeks (Low)",
+            "Confidence": "75% (Med)",
+        },
+    ]
 
-    with r_col2:
+    df_opp_display = pd.DataFrame(opp_data)
+    st.dataframe(df_opp_display, use_container_width=True, hide_index=True)
+
+    st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
+
+    # 2. MIDDLE ROW: IMPACT VS EFFORT BUBBLE CHART & CATEGORY SENSITIVITY
+    c1, c2 = st.columns([1.2, 1])
+
+    with c1:
+        st.markdown(
+            """
+            <div class="chart-card">
+                <div class="chart-title">🎯 Opportunity Prioritization: Impact vs. Dev Effort</div>
+            """,
+            unsafe_allow_html=True,
+        )
+        p_fig = build_opportunity_prioritization_chart()
+        st.plotly_chart(p_fig, use_container_width=True, config={"displayModeBar": False})
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with c2:
+        st.markdown(
+            """
+            <div class="chart-card">
+                <div class="chart-title">👗 Category Sensitivity: CVR Lift by Apparel Segment</div>
+            """,
+            unsafe_allow_html=True,
+        )
+        cat_fig = build_category_sensitivity_bar()
+        st.plotly_chart(cat_fig, use_container_width=True, config={"displayModeBar": False})
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
+
+    # 3. BOTTOM SECTION: MULTI-SCENARIO INTERACTIVE SENSITIVITY CALCULATOR
+    st.markdown(
+        """
+        <div class="chart-card">
+            <div class="chart-title">🎛️ Interactive Financial Sensitivity & Scenario Simulator</div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    s_col1, s_col2 = st.columns([1, 1.2])
+
+    with s_col1:
+        selected_scenario = st.radio(
+            "Select Projection Scenario:",
+            ["Conservative (+0.8% CVR Lift)", "Base Case (+1.5% CVR Lift)", "Aggressive (+2.5% CVR Lift)"],
+            index=1,
+            horizontal=True,
+            key="scenario_radio_app",
+        )
+
+        lift_default = 1.5
+        if "Conservative" in selected_scenario:
+            lift_default = 0.8
+        elif "Aggressive" in selected_scenario:
+            lift_default = 2.5
+
+        monthly_wishlists = st.slider("Monthly Active Wishlist Saves", min_value=500000, max_value=5000000, value=2000000, step=100000, format="%d", key="rev_wl_app")
+        current_cvr = st.slider("Current Wishlist Conversion Rate (%)", min_value=1.0, max_value=10.0, value=4.2, step=0.1, key="rev_cvr_app")
+        expected_lift = st.slider("Projected CVR Lift from Roadmap Bet (%)", min_value=0.2, max_value=5.0, value=lift_default, step=0.1, key="rev_lift_app")
+        aov = st.slider("Average Order Value (₹)", min_value=1000, max_value=5000, value=2140, step=50, key="rev_aov_app")
+
+    with s_col2:
         new_cvr = current_cvr + expected_lift
         current_orders = monthly_wishlists * (current_cvr / 100)
         new_orders = monthly_wishlists * (new_cvr / 100)
@@ -493,27 +603,27 @@ elif st.session_state.active_nav == "Revenue":
         monthly_gmv_lift = (incremental_orders * aov) / 10000000  # in Crores
         annual_gmv_lift = monthly_gmv_lift * 12
 
-        st.markdown("### 📊 Opportunity Sizing Results")
         st.markdown(
             f"""
             <div class="kpi-card" style="margin-bottom: 1rem;">
                 <div class="kpi-title">Incremental Monthly Orders</div>
-                <div class="kpi-value">{int(incremental_orders):,} orders</div>
-                <div class="badge badge-baseline">+{expected_lift}% Conversion Lift</div>
+                <div class="kpi-value">{int(incremental_orders):,} orders / month</div>
+                <div class="badge badge-baseline">+{expected_lift}% Conversion Lift ({selected_scenario.split(' ')[0]})</div>
             </div>
             <div class="kpi-card" style="margin-bottom: 1rem;">
                 <div class="kpi-title">Monthly Recovered GMV</div>
                 <div class="kpi-value critical">₹ {monthly_gmv_lift:.2f} Crores / month</div>
-                <div class="badge badge-critical">High Impact</div>
+                <div class="badge badge-critical">High Business Impact</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-title">Annualized Revenue Potential</div>
+                <div class="kpi-title">Annualized Revenue Recovery Potential</div>
                 <div class="kpi-value critical">₹ {annual_gmv_lift:.2f} Crores / year</div>
-                <div class="badge badge-filtered">Zero Discount Cost</div>
+                <div class="badge badge-filtered">100% Zero-Discount Margin Protection</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
 # TAB 5: STRATEGIC PM Q&A & AI COPILOT VIEW (GPT MODE)

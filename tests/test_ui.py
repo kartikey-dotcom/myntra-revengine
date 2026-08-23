@@ -4,7 +4,12 @@ import pandas as pd
 import pytest
 
 from src.database.db_manager import DatabaseManager
-from src.ui.charts import build_donut_chart, build_channel_stacked_bar
+from src.ui.charts import (
+    build_donut_chart,
+    build_channel_stacked_bar,
+    build_opportunity_prioritization_chart,
+    build_category_sensitivity_bar,
+)
 
 
 class TestUIDashboard:
@@ -49,3 +54,16 @@ class TestUIDashboard:
         assert fig.data[0].name == "Reddit"
         assert fig.data[1].name == "YouTube"
         assert fig.data[2].name == "App Store"
+
+    def test_opportunity_prioritization_chart(self):
+        fig = build_opportunity_prioritization_chart()
+        assert fig is not None
+        assert len(fig.data) == 4  # 4 opportunity bets (P0, P1, P2, P3)
+        assert fig.layout.xaxis.title.text == "Engineering Effort (Weeks to Ship)"
+        assert fig.layout.yaxis.title.text == "Annual Recovered GMV (₹ Crores)"
+
+    def test_category_sensitivity_bar(self):
+        fig = build_category_sensitivity_bar()
+        assert fig is not None
+        assert len(fig.data) == 2  # Baseline vs Projected
+        assert fig.layout.barmode == "group"

@@ -170,3 +170,94 @@ def build_traffic_trend_chart() -> go.Figure:
     )
 
     return fig
+
+
+def build_opportunity_prioritization_chart() -> go.Figure:
+    """Builds an Impact vs Effort bubble chart comparing all 4 strategic product opportunity areas."""
+    opportunities = [
+        {"name": "Complete the Look (AI Bundles)", "effort_wks": 8, "annual_gmv": 77.0, "share": 38.2, "lift": "+1.5% CVR", "color": "#E11D48", "priority": "P0"},
+        {"name": "TrueFit Sizing & Dimension Scanner", "effort_wks": 5, "annual_gmv": 56.5, "share": 28.8, "lift": "+1.1% CVR", "color": "#FF2A6D", "priority": "P1"},
+        {"name": "Smart Side-by-Side Compare Mode", "effort_wks": 2.5, "annual_gmv": 30.8, "share": 16.2, "lift": "+0.6% CVR", "color": "#3B82F6", "priority": "P2"},
+        {"name": "WhatsApp Peer Validation Canvas", "effort_wks": 2, "annual_gmv": 25.7, "share": 16.8, "lift": "+0.5% CVR", "color": "#10B981", "priority": "P3"},
+    ]
+
+    df_opp = pd.DataFrame(opportunities)
+
+    fig = go.Figure()
+
+    for _, row in df_opp.iterrows():
+        fig.add_trace(
+            go.Scatter(
+                x=[row["effort_wks"]],
+                y=[row["annual_gmv"]],
+                mode="markers+text",
+                name=row["name"],
+                text=[f"<b>{row['priority']}: {row['name']}</b>"],
+                textposition="top center",
+                marker=dict(
+                    size=[row["share"] * 1.5],
+                    color=row["color"],
+                    line=dict(width=2, color="#FFFFFF"),
+                    opacity=0.9,
+                ),
+                hovertemplate=(
+                    f"<b>{row['name']}</b><br>"
+                    f"Priority: <b>{row['priority']}</b><br>"
+                    f"Annual GMV Lift: <b>₹ {row['annual_gmv']:.1f} Cr</b><br>"
+                    f"Expected CVR Lift: <b>{row['lift']}</b><br>"
+                    f"Friction Share: <b>{row['share']}%</b><br>"
+                    f"Dev Effort: <b>{row['effort_wks']} weeks</b><extra></extra>"
+                ),
+            )
+        )
+
+    fig.update_layout(
+        height=360,
+        margin=dict(t=30, b=40, l=50, r=40),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="#F8FAFC",
+        showlegend=False,
+        xaxis=dict(
+            title=dict(text="Engineering Effort (Weeks to Ship)", font=dict(size=12, color="#64748B")),
+            range=[1, 9.5],
+            showgrid=True,
+            gridcolor="#E2E8F0",
+            tickvals=[2, 4, 6, 8],
+            ticktext=["2 wks (Sprint)", "4 wks (Monthly)", "6 wks", "8 wks (Quarter)"],
+            tickfont=dict(size=11, color="#64748B"),
+        ),
+        yaxis=dict(
+            title=dict(text="Annual Recovered GMV (₹ Crores)", font=dict(size=12, color="#64748B")),
+            range=[15, 90],
+            showgrid=True,
+            gridcolor="#E2E8F0",
+            tickprefix="₹ ",
+            ticksuffix=" Cr",
+            tickfont=dict(size=11, color="#64748B"),
+        ),
+    )
+
+    return fig
+
+
+def build_category_sensitivity_bar() -> go.Figure:
+    """Builds a breakdown comparing CVR recovery potential across apparel segments."""
+    categories = ["Ethnic Wear", "Western Casuals", "Statement / Party", "Footwear"]
+    baseline_cvr = [3.2, 5.1, 2.8, 4.6]
+    projected_cvr = [5.2, 6.7, 4.4, 5.8]
+
+    fig = go.Figure()
+    fig.add_trace(go.Bar(name="Current Baseline CVR (%)", x=categories, y=baseline_cvr, marker_color="#94A3B8"))
+    fig.add_trace(go.Bar(name="Projected Post-Intervention CVR (%)", x=categories, y=projected_cvr, marker_color="#E11D48"))
+
+    fig.update_layout(
+        barmode="group",
+        height=280,
+        margin=dict(t=20, b=20, l=20, r=20),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        legend=dict(orientation="h", yanchor="top", y=-0.18, xanchor="center", x=0.5, font=dict(size=11, color="#64748B")),
+        yaxis=dict(ticksuffix="%", showgrid=True, gridcolor="#F1F5F9"),
+    )
+    return fig
+

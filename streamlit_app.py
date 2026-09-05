@@ -590,23 +590,30 @@ elif st.session_state.active_nav == "Revenue":
     s_col1, s_col2 = st.columns([1, 1.2])
 
     with s_col1:
+        def on_scenario_change():
+            sc = st.session_state.get("scenario_radio", "")
+            if "Conservative" in sc:
+                st.session_state["rev_lift"] = 0.8
+            elif "Aggressive" in sc:
+                st.session_state["rev_lift"] = 2.5
+            else:
+                st.session_state["rev_lift"] = 1.5
+
+        if "rev_lift" not in st.session_state:
+            st.session_state["rev_lift"] = 1.5
+
         selected_scenario = st.radio(
             "Select Projection Scenario:",
             ["Conservative (+0.8% CVR Lift)", "Base Case (+1.5% CVR Lift)", "Aggressive (+2.5% CVR Lift)"],
             index=1,
             horizontal=True,
             key="scenario_radio",
+            on_change=on_scenario_change,
         )
-
-        lift_default = 1.5
-        if "Conservative" in selected_scenario:
-            lift_default = 0.8
-        elif "Aggressive" in selected_scenario:
-            lift_default = 2.5
 
         monthly_wishlists = st.slider("Monthly Active Wishlist Saves", min_value=500000, max_value=5000000, value=2000000, step=100000, format="%d", key="rev_wl")
         current_cvr = st.slider("Current Wishlist Conversion Rate (%)", min_value=1.0, max_value=10.0, value=4.2, step=0.1, key="rev_cvr")
-        expected_lift = st.slider("Projected CVR Lift from Roadmap Bet (%)", min_value=0.2, max_value=5.0, value=lift_default, step=0.1, key="rev_lift")
+        expected_lift = st.slider("Projected CVR Lift from Roadmap Bet (%)", min_value=0.2, max_value=5.0, step=0.1, key="rev_lift")
         aov = st.slider("Average Order Value (₹)", min_value=1000, max_value=5000, value=2140, step=50, key="rev_aov")
 
     with s_col2:

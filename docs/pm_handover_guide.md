@@ -52,8 +52,6 @@ streamlit run streamlit_app.py
 3. **Verbatim Evidence Explorer:**
    - Use the category dropdown filter to inspect real consumer quotes.
    - Each card displays source channel, confidence score, and highlighted verbatim proof.
-4. **Strategic Recommendation Banner:**
-   - Click **"View MVP Proposal"** to expand the PRD for the top-priority Growth initiative.
 
 ---
 

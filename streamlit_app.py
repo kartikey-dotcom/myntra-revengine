@@ -302,55 +302,6 @@ if st.session_state.active_nav == "Customer":
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # STRATEGIC RECOMMENDATION & MVP PROPOSAL
-    st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div class="chart-card">
-            <div class="chart-title">Strategic Intervention: Complete the Look Engine</div>
-            <p style="font-size: 0.95rem; color: #475569; line-height: 1.6;">
-                Based on <strong>38.2% of high-intent wishlist hesitations</strong> stemming from Styling Isolation, 
-                our primary non-monetary product recommendation is an AI-driven bundling engine that dynamically generates 
-                outfit pairings directly on the Wishlist and PDP surfaces.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    if "show_prd" not in st.session_state:
-        st.session_state.show_prd = False
-
-    btn_col1, btn_col2 = st.columns([1, 4])
-    with btn_col1:
-        if st.button("View MVP Proposal", use_container_width=True, key="btn_mvp_cust"):
-            st.session_state.show_prd = not st.session_state.show_prd
-
-    if st.session_state.show_prd:
-        with st.expander("📋 PRD: 'Complete the Look' AI Bundling Feature (Click to collapse)", expanded=True):
-            st.markdown(
-                """
-                ### Product Requirements Document (PRD)
-                **Feature Name:** *Myntra StyleSync — Complete the Look Bundling*  
-                **Target Metric:** +12% Wishlist-to-Cart Conversion Rate  
-                **Target Quarter:** Q3/Q4 Growth Roadmap  
-
-                ---
-
-                #### 1. Problem Statement
-                * **38.2% of high-intent shoppers** abandon wishlist items because they cannot visualize how to pair the garment with existing wardrobe items or compatible accessories.
-                * Standalone product photos fail to provide outfit inspiration, leading to decision paralysis.
-
-                #### 2. Proposed AI Solution
-                1. **Dynamic Outfit Generator:** Automatically generate 3 curated outfit bundles (e.g. *Office Casual, Weekend Brunch, Evening Party*) around any saved wishlist SKU.
-                2. **Wardrobe Harmony Score:** Allow shoppers to select items from their past purchase history to calculate outfit compatibility.
-                3. **1-Click Bundle Checkout:** Purchase the primary item with 1-click add-on options for paired bottoms or accessories, eliminating navigation friction.
-
-                #### 3. Success Metrics & KPIs
-                * **Primary KPI:** +12% Lift in Wishlist conversion within 14 days of save.
-                * **Secondary KPI:** +18% increase in Average Order Value (AOV) via paired cross-selling.
-                """
-            )
 
 # -----------------------------------------------------------------------------
 # TAB 2: PERFORMANCE VIEW
@@ -763,7 +714,6 @@ elif st.session_state.active_nav == "Strategic Q&A":
         st.session_state.messages.append({"role": "user", "content": prompt_text})
         response = st.session_state.qa_chatbot.generate_response(prompt_text)
         st.session_state.messages.append({"role": "assistant", "content": response})
-        st.rerun()
 
     # Header controls (Reset chat option)
     if len(st.session_state.messages) > 1:
